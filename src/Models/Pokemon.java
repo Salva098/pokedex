@@ -2,6 +2,13 @@ package Models;
 
 public class Pokemon {
 
+	@Override
+	public String toString() {
+		return "Pokemon [id_pokemon=" + id_pokemon + ", nombre=" + nombre + ", altura=" + altura + ", categoria="
+				+ categoria + ", peso=" + peso + ", descripcion=" + descripcion + ", habilidad=" + habilidad
+				+ ", tipo=" + tipo + "]";
+	}
+
 	private int id_pokemon;
 	private String nombre;
 	private float altura;
@@ -9,10 +16,13 @@ public class Pokemon {
 	private float peso;
 	private String descripcion;
 	private String habilidad;
-	private String sonido;
+	private String tipo;
+
+	
 
 	public Pokemon(int id_pokemon, String nombre, float altura, String categoria, float peso, String descripcion,
-			String habilidad, String sonido) {
+			String habilidad, String tipo) {
+		super();
 		this.id_pokemon = id_pokemon;
 		this.nombre = nombre;
 		this.altura = altura;
@@ -20,7 +30,15 @@ public class Pokemon {
 		this.peso = peso;
 		this.descripcion = descripcion;
 		this.habilidad = habilidad;
-		this.sonido = sonido;
+		this.tipo = tipo;
+	}
+	
+	public String getTipo() {
+		return tipo;
+	}
+	
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public int getId_pokemon() {
@@ -78,13 +96,4 @@ public class Pokemon {
 	public void setHabilidad(String habilidad) {
 		this.habilidad = habilidad;
 	}
-
-	public String getSonido() {
-		return sonido;
-	}
-
-	public void setSonido(String sonido) {
-		this.sonido = sonido;
-	}
-
 }
