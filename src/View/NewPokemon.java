@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.Normalizer;
 
 import javax.imageio.ImageIO;
@@ -48,13 +49,26 @@ public class NewPokemon {
 	private JTextField txtCategoria;
 	private JTextField txtHabilidad;
 	private JTextField txtTipo;
+	private JButton btnedit;
+	private DecimalFormat pkimg;
+	private boolean edit;
 
 	/**
 	 * Create the application.
 	 */
-	public NewPokemon(int x, int y) {
+	public NewPokemon(int x, int y, Pokemon poke) {
 		initialize();
-		frame.setBounds(x, y, 775, 597);
+		if (poke == null) {
+			edit = false;
+		} else {
+			edit = true;
+			pokimon = poke;
+			loadPokemon(poke);
+		}
+		frame.setBounds(x, y, 812, 643);
+		btnedit.setVisible(edit);
+		btnCrear.setVisible(!edit);
+
 	}
 
 	/**
@@ -65,50 +79,160 @@ public class NewPokemon {
 		loadcontent();
 		setLiseners();
 		loadFrame();
+
 	}
 
-	private void setLiseners() {
-		btnCrear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
-						&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
-						&& !txtTipo.getText().isBlank() || !textAreaDescrp.getText().isBlank()) {
-					pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), quitarTildes(txtNombre.getText()),
-							Float.valueOf(txtAltura.getText()), quitarTildes(txtCategoria.getText()),
-							Float.valueOf(txtPeso.getText()), quitarTildes(textAreaDescrp.getText()),
-							quitarTildes(txtHabilidad.getText()), quitarTildes(txtTipo.getText()));
+	private void loadPokemon(Pokemon poke) {
+		lblNumero.setText(String.valueOf(poke.getId_pokemon()));
+		txtNombre.setText(poke.getNombre());
+		txtAltura.setText(String.valueOf(poke.getAltura()));
+		txtPeso.setText(String.valueOf(poke.getPeso()));
+		txtCategoria.setText(poke.getCategoria());
+		txtHabilidad.setText(poke.getHabilidad());
+		txtTipo.setText(poke.getTipo());
+		textAreaDescrp.setText(poke.getDescripcion());
+		pkimg = new DecimalFormat("000");
+		try {
+			lblHowIsThisPokimon
+					.setIcon(new ImageIcon(new URL("https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
+							+ pkimg.format(poke.getId_pokemon()) + ".png")));
+			lblHowIsThisPokimon.setVerticalAlignment(SwingConstants.CENTER);
+			lblHowIsThisPokimon.setHorizontalAlignment(SwingConstants.CENTER);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO
 
-					if (PokemonDAO.NewPokimon(pokimon)) {
+	}
 
-						lblNumero.setText(String.valueOf(PokemonDAO.cuantosPokemonHay() + 1));
-						txtNombre.setText("");
-						txtAltura.setText("");
-						txtCategoria.setText("");
-						txtPeso.setText("");
-						txtCategoria.setText("");
-						txtPeso.setText("");
-						textAreaDescrp.setText("");
-						txtHabilidad.setText("");
-						txtTipo.setText("");
+	private void newPokemonBD() {
+		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
+				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
+				&& !txtTipo.getText().isBlank() || !textAreaDescrp.getText().isBlank()) {
 
-					} else {
-						try {
-							JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe", "Los tipos no coincide", 0,
-									new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
-						} catch (HeadlessException | MalformedURLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
+			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), quitarTildes(txtNombre.getText()),
+					Float.valueOf(txtAltura.getText()), quitarTildes(txtCategoria.getText()),
+					Float.valueOf(txtPeso.getText()), quitarTildes(textAreaDescrp.getText()),
+					quitarTildes(txtHabilidad.getText()), quitarTildes(txtTipo.getText()));
+			int eleccion = 0;
+			try {
+				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
+						JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/pikachu-hoenn.png")));
+			} catch (HeadlessException | MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (eleccion == 0) {
+				if (PokemonDAO.NewPokimon(pokimon)) {
+
+					lblNumero.setText(String.valueOf(PokemonDAO.cuantosPokemonHay() + 1));
+					txtNombre.setText("");
+					txtAltura.setText("");
+					txtCategoria.setText("");
+					txtPeso.setText("");
+					txtCategoria.setText("");
+					txtPeso.setText("");
+					textAreaDescrp.setText("");
+					txtHabilidad.setText("");
+					txtTipo.setText("");
+
 				} else {
 					try {
-						JOptionPane.showMessageDialog(frame, "No has rellenado los campos", "Has invocado un grimer", 0,
+						JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
+								"Los tipos no coincide", JOptionPane.ERROR_MESSAGE,
 								new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
 					} catch (HeadlessException | MalformedURLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
+
+			} else if (eleccion == 1) {
+				try {
+					JOptionPane.showMessageDialog(frame, "El pokemon no se ha añadido", "No se ha añadido",
+							JOptionPane.INFORMATION_MESSAGE,
+							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/mimikyu-busted.png")));
+				} catch (HeadlessException | MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {
+			try {
+				JOptionPane.showMessageDialog(frame, "No has rellenado los campos", "Has invocado un grimer", 0,
+						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
+			} catch (HeadlessException | MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	private void editPokemonBD() {
+
+		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
+				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
+				&& !txtTipo.getText().isBlank() || !textAreaDescrp.getText().isBlank()) {
+
+			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), quitarTildes(txtNombre.getText()),
+					Float.valueOf(txtAltura.getText()), quitarTildes(txtCategoria.getText()),
+					Float.valueOf(txtPeso.getText()), quitarTildes(textAreaDescrp.getText()),
+					quitarTildes(txtHabilidad.getText()), quitarTildes(txtTipo.getText()));
+
+			int eleccion = 0;
+			try {
+				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
+						JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/pikachu-hoenn.png")));
+			} catch (HeadlessException | MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (eleccion == 0) {
+
+				if (PokemonDAO.existeTipo(pokimon)) {
+					PokemonDAO.editPokemon(pokimon);
+					new Pokedex(frame.getX(), frame.getY());
+					frame.dispose();
+				} else {
+					try {
+						JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
+								"Los tipos no coincide", 0,
+								new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
+					} catch (HeadlessException | MalformedURLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
+			} else if (eleccion == 1) {
+				try {
+					JOptionPane.showMessageDialog(frame, "El pokemon no se ha añadido", "No se ha añadido",
+							JOptionPane.INFORMATION_MESSAGE,
+							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/mimikyu-busted.png")));
+				} catch (HeadlessException | MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					JOptionPane.showMessageDialog(frame, "No has rellenado los campos", "Has invocado un grimer", 0,
+							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
+				} catch (HeadlessException | MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	private void setLiseners() {
+		btnCrear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				newPokemonBD();
 			}
 		});
 		btnatras.addActionListener(new ActionListener() {
@@ -118,17 +242,22 @@ public class NewPokemon {
 
 			}
 		});
+		btnedit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editPokemonBD();
+			}
+		});
 	}
 
 	private void loadFrame() {
 		// foto del fondo la cargo cuando el panel
 		try {
-			lblfondo = new JLabel(new ImageIcon(new URL("https://i.imgur.com/k7EDxUM.png")));
+			lblfondo = new JLabel(new ImageIcon(new URL("https://gran4u.xtgem.com/Pokedex.png")));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		lblfondo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblfondo.setBounds(-42, -54, 827, 655);
+		lblfondo.setBounds(0, 0, 796, 608);
 		frame.getContentPane().add(lblfondo);
 
 		try {
@@ -151,120 +280,124 @@ public class NewPokemon {
 
 	private void loadcontent() {
 
+		btnedit = new JButton("Editar");
+		btnedit.setBounds(467, 547, 89, 23);
+		frame.getContentPane().add(btnedit);
+
 		btnatras = new JButton("Atras");
-		btnatras.setBounds(626, 505, 89, 23);
+		btnatras.setBounds(669, 547, 89, 23);
 		frame.getContentPane().add(btnatras);
 
 		btnCrear = new JButton("Crear");
-		btnCrear.setBounds(443, 505, 89, 23);
+		btnCrear.setBounds(467, 547, 89, 23);
 		frame.getContentPane().add(btnCrear);
 
 		txtTipo = new JTextField();
-		txtTipo.setBounds(604, 353, 111, 20);
+		txtTipo.setBounds(604, 380, 111, 20);
 		frame.getContentPane().add(txtTipo);
 		txtTipo.setColumns(10);
 
 		txtHabilidad = new JTextField();
-		txtHabilidad.setBounds(604, 327, 111, 20);
+		txtHabilidad.setBounds(604, 349, 111, 20);
 		frame.getContentPane().add(txtHabilidad);
 		txtHabilidad.setColumns(10);
 
 		txtCategoria = new JTextField();
-		txtCategoria.setBounds(604, 295, 111, 20);
+		txtCategoria.setBounds(604, 318, 111, 20);
 		frame.getContentPane().add(txtCategoria);
 		txtCategoria.setColumns(10);
 
 		txtPeso = new JTextField();
-		txtPeso.setBounds(604, 265, 111, 20);
+		txtPeso.setBounds(604, 287, 111, 20);
 		frame.getContentPane().add(txtPeso);
 		txtPeso.setColumns(10);
 
 		txtAltura = new JTextField();
-		txtAltura.setBounds(604, 235, 111, 20);
+		txtAltura.setBounds(604, 256, 111, 20);
 		frame.getContentPane().add(txtAltura);
 		txtAltura.setColumns(10);
 
 		txtNombre = new JTextField();
-		txtNombre.setBounds(604, 205, 111, 20);
+		txtNombre.setBounds(604, 225, 111, 20);
 		frame.getContentPane().add(txtNombre);
 		txtNombre.setColumns(10);
 
 		lblHabilidadPokemon = new JLabel("Habilidad: ");
 		lblHabilidadPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblHabilidadPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblHabilidadPokemon.setBounds(444, 327, 121, 23);
+		lblHabilidadPokemon.setBounds(467, 349, 121, 23);
 		frame.getContentPane().add(lblHabilidadPokemon);
 
 		textAreaDescrp = new JTextArea();
 		textAreaDescrp.setWrapStyleWord(true);
 		textAreaDescrp.setBackground(Color.WHITE);
-		textAreaDescrp.setBounds(447, 411, 268, 73);
+		textAreaDescrp.setBounds(467, 448, 291, 80);
 		textAreaDescrp.setLineWrap(true);
 		frame.getContentPane().add(textAreaDescrp);
 
 		lblNumero = new JLabel(String.valueOf(PokemonDAO.cuantosPokemonHay() + 1));
 		lblNumero.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNumero.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblNumero.setBounds(604, 178, 118, 19);
+		lblNumero.setBounds(604, 195, 111, 19);
 		frame.getContentPane().add(lblNumero);
 
 		lblDescripcionPokemon = new JLabel("Descripcion:");
 		lblDescripcionPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblDescripcionPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblDescripcionPokemon.setBounds(447, 381, 105, 19);
+		lblDescripcionPokemon.setBounds(466, 418, 105, 19);
 		frame.getContentPane().add(lblDescripcionPokemon);
 
 		lblTipoPokemon = new JLabel("Tipo: ");
 		lblTipoPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblTipoPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblTipoPokemon.setBounds(444, 349, 118, 31);
+		lblTipoPokemon.setBounds(467, 376, 118, 31);
 		frame.getContentPane().add(lblTipoPokemon);
 
 		lblCategoriaPokemon = new JLabel("Categoria: ");
 		lblCategoriaPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblCategoriaPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblCategoriaPokemon.setBounds(450, 297, 121, 19);
+		lblCategoriaPokemon.setBounds(467, 319, 121, 19);
 		frame.getContentPane().add(lblCategoriaPokemon);
 
 		lblPesoPokemon = new JLabel("Peso: ");
 		lblPesoPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblPesoPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblPesoPokemon.setBounds(450, 267, 121, 19);
+		lblPesoPokemon.setBounds(467, 289, 121, 19);
 		frame.getContentPane().add(lblPesoPokemon);
 
 		lblAlturaPokemon = new JLabel("Altura: ");
 		lblAlturaPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblAlturaPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblAlturaPokemon.setBounds(450, 237, 121, 19);
+		lblAlturaPokemon.setBounds(467, 258, 121, 19);
 		frame.getContentPane().add(lblAlturaPokemon);
 
 		lblNombrePokemon = new JLabel("Nombre: ");
 		lblNombrePokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNombrePokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
-		lblNombrePokemon.setBounds(450, 207, 144, 19);
+		lblNombrePokemon.setBounds(467, 226, 121, 19);
 		frame.getContentPane().add(lblNombrePokemon);
 
 		lblNumeroPokemon = new JLabel("Numero: ");
 		lblNumeroPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
 		lblNumeroPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNumeroPokemon.setBounds(450, 177, 144, 19);
+		lblNumeroPokemon.setBounds(467, 195, 121, 19);
 		frame.getContentPane().add(lblNumeroPokemon);
 
 		try {
-			lblHowIsThisPokimon = new JLabel(
-					new ImageIcon(new URL("https://elvortex.com/wp-content/uploads/2018/03/HddtBOT-e1520478229723.png")));
-			lblHowIsThisPokimon.setFont(new Font("Tahoma", Font.PLAIN, 11));
+			lblHowIsThisPokimon = new JLabel(new ImageIcon(new URL("https://i.imgur.com/qiPqGtS.gif")));
+			lblHowIsThisPokimon.setVerticalAlignment(SwingConstants.TOP);
+			lblHowIsThisPokimon.setHorizontalAlignment(SwingConstants.LEFT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		lblHowIsThisPokimon.setBounds(29, 137, 311, 316);
+		lblHowIsThisPokimon.setBounds(28, 158, 330, 335);
 		frame.getContentPane().add(lblHowIsThisPokimon);
 
 		lblDatosPokemon = new JLabel("Datos Pokemon:");
 		lblDatosPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
 		lblDatosPokemon.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDatosPokemon.setBounds(440, 140, 284, 26);
+		lblDatosPokemon.setBounds(467, 170, 291, 26);
 		frame.getContentPane().add(lblDatosPokemon);
 
 	}

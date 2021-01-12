@@ -13,30 +13,26 @@ public class PokemonDAO extends BDDAO {
 		String tipos = "";
 		boolean next = false;
 		try {
-			ResultSet rs = stmt.executeQuery("select * from pokemon where n_pokemon = " + idpokemon);
-			next = rs.next();
+			ResultSet pokemon = stmt.executeQuery("select * from pokemon where n_pokemon = " + idpokemon);
+			next = pokemon.next();
 			if (next) {
 
-				pk = new Pokemon(idpokemon, rs.getString(2), rs.getFloat(3), rs.getString(4), rs.getFloat(5),
-						rs.getString(6), rs.getString(7), null);
+				pk = new Pokemon(idpokemon, pokemon.getString(2), pokemon.getFloat(3), pokemon.getString(4),
+						pokemon.getFloat(5), pokemon.getString(6), pokemon.getString(7), null);
 			}
 
-		} catch (SQLException ex) {
-			System.out.println(ex.getMessage());
-		}
-		try {
-			ResultSet rs = stmt.executeQuery(
+			ResultSet tipo = stmt.executeQuery(
 					"select tipo from tipos,pokemon_tipos where tipos.idTipos = pokemon_tipos.idTipos and n_pokemon="
 							+ idpokemon);
 			int ntipos = 0;
 			if (next) {
 
-				while (rs.next()) {
+				while (tipo.next()) {
 					ntipos++;
 					if (ntipos == 1) {
-						tipos = rs.getString(1);
+						tipos = tipo.getString(1);
 					} else {
-						tipos = rs.getString(1) + ", " + tipos;
+						tipos = tipo.getString(1) + ", " + tipos;
 					}
 				}
 
@@ -87,7 +83,7 @@ public class PokemonDAO extends BDDAO {
 				ResultSet n_tipo = stmt.executeQuery("SELECT idTipos FROM tipos WHERE  Tipo like '" + tipos[i] + "'");
 				if (n_tipo.next()) {
 					tipos[i] = n_tipo.getString(1);
-				}else {
+				} else {
 					return false;
 				}
 
@@ -106,10 +102,41 @@ public class PokemonDAO extends BDDAO {
 		return true;
 	}
 
-	public static int cuantosPokemonHay() {
-		ResultSet rs;
+	public static boolean existeTipo(Pokemon poke) {
+		String tipos[] = poke.getTipo().split(", ");
 		try {
-			rs = stmt.executeQuery("select count(*) from pokemon");
+			for (int i = 0; i < tipos.length; i++) {
+				ResultSet n_tipo = stmt.executeQuery("SELECT idTipos FROM tipos WHERE  Tipo like '" + tipos[i] + "'");
+				if (!n_tipo.next()) {
+					return false;
+				}
+			}
+		}
+
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	public static String geticonoTipo(String tipo) {
+		try {
+			ResultSet rs = stmt.executeQuery("select tipoico from tipos where tipo like '" + tipo + "'");
+			if (rs.next()) {
+				return rs.getString(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public static int cuantosPokemonHay() {
+		try {
+			ResultSet rs = stmt.executeQuery("select count(*) from pokemon ");
 			if (rs.next()) {
 
 				return rs.getInt(1);
@@ -120,6 +147,20 @@ public class PokemonDAO extends BDDAO {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	public static void editPokemon(Pokemon Poke) {
+		try {
+			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + Poke.getId_pokemon());
+			stmt.executeUpdate("DELETE FROM pokemon WHERE n_pokemon = " + Poke.getId_pokemon());
+			System.out.println("eliminado");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (NewPokimon(Poke)) {
+
+		}
 	}
 
 }
