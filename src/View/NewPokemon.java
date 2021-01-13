@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.Normalizer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -23,6 +22,7 @@ import javax.swing.SwingConstants;
 
 import DAO.PokemonDAO;
 import Models.Pokemon;
+import Util.TextHelp;
 
 public class NewPokemon {
 
@@ -52,11 +52,15 @@ public class NewPokemon {
 	private JButton btnedit;
 	private DecimalFormat pkimg;
 	private boolean edit;
-
+	private TextHelp text;
+	private PokemonDAO BBDD;
+	
 	/**
 	 * Create the application.
 	 */
 	public NewPokemon(int x, int y, Pokemon poke) {
+		BBDD = new PokemonDAO();
+		text= new TextHelp();
 		initialize();
 		if (poke == null) {
 			edit = false;
@@ -111,10 +115,10 @@ public class NewPokemon {
 				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
 				&& !txtTipo.getText().isBlank() || !textAreaDescrp.getText().isBlank()) {
 
-			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), quitarTildes(txtNombre.getText()),
-					Float.valueOf(txtAltura.getText()), quitarTildes(txtCategoria.getText()),
-					Float.valueOf(txtPeso.getText()), quitarTildes(textAreaDescrp.getText()),
-					quitarTildes(txtHabilidad.getText()), quitarTildes(txtTipo.getText()));
+			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
+					Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
+					Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
+					text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(txtTipo.getText()));
 			int eleccion = 0;
 			try {
 				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
@@ -125,9 +129,9 @@ public class NewPokemon {
 				e.printStackTrace();
 			}
 			if (eleccion == 0) {
-				if (PokemonDAO.NewPokimon(pokimon)) {
+				if (BBDD.NewPokimon(pokimon)) {
 
-					lblNumero.setText(String.valueOf(PokemonDAO.cuantosPokemonHay() + 1));
+					lblNumero.setText(String.valueOf(BBDD.cuantosPokemonHay() + 1));
 					txtNombre.setText("");
 					txtAltura.setText("");
 					txtCategoria.setText("");
@@ -176,25 +180,25 @@ public class NewPokemon {
 				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
 				&& !txtTipo.getText().isBlank() || !textAreaDescrp.getText().isBlank()) {
 
-			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), quitarTildes(txtNombre.getText()),
-					Float.valueOf(txtAltura.getText()), quitarTildes(txtCategoria.getText()),
-					Float.valueOf(txtPeso.getText()), quitarTildes(textAreaDescrp.getText()),
-					quitarTildes(txtHabilidad.getText()), quitarTildes(txtTipo.getText()));
+			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
+					Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
+					Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
+					text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(txtTipo.getText()));
 
 			int eleccion = 0;
 			try {
-				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
+				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres editar este pokemon", "Editar pokemon",
 						JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
-						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/pikachu-hoenn.png")));
+						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/melmetal.png")));
 			} catch (HeadlessException | MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (eleccion == 0) {
 
-				if (PokemonDAO.existeTipo(pokimon)) {
-					PokemonDAO.editPokemon(pokimon);
-					new Pokedex(frame.getX(), frame.getY());
+				if (BBDD.existeTipo(pokimon)) {
+					BBDD.editPokemon(pokimon);
+					new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon());
 					frame.dispose();
 				} else {
 					try {
@@ -237,9 +241,13 @@ public class NewPokemon {
 		});
 		btnatras.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Pokedex(frame.getX(), frame.getY());
-				frame.dispose();
-
+				if (!edit) {
+					new Pokedex(frame.getX(), frame.getY(),0);
+					frame.dispose();
+				}else {
+					new Pokedex(frame.getX(), frame.getY(),pokimon.getId_pokemon());
+					frame.dispose();
+				}
 			}
 		});
 		btnedit.addActionListener(new ActionListener() {
@@ -335,7 +343,7 @@ public class NewPokemon {
 		textAreaDescrp.setLineWrap(true);
 		frame.getContentPane().add(textAreaDescrp);
 
-		lblNumero = new JLabel(String.valueOf(PokemonDAO.cuantosPokemonHay() + 1));
+		lblNumero = new JLabel(String.valueOf(BBDD.cuantosPokemonHay() + 1));
 		lblNumero.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNumero.setFont(new Font("Bahnschrift", Font.BOLD, 15));
 		lblNumero.setBounds(604, 195, 111, 19);
@@ -402,9 +410,4 @@ public class NewPokemon {
 
 	}
 
-	public String quitarTildes(String texto) {
-		texto = Normalizer.normalize(texto, Normalizer.Form.NFD);
-		texto = texto.replaceAll("\\p{M}", "");
-		return texto;
-	}
 }

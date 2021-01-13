@@ -43,11 +43,13 @@ public class Register extends JPanel{
 	protected Cursor cursor;
 	protected ImageIcon imagenes;
 	protected JLabel lblfondo;
+	private UsuarioDAO BBDD;
 
 	/**
 	 * Create the application.
 	 */
 	public Register(JPanel parent) {
+		BBDD=new UsuarioDAO();
 		this.parent=parent;
 		try {
 			initialize();
@@ -123,7 +125,7 @@ public class Register extends JPanel{
 	}
 
 	private void signIn() {
-		if (!UsuarioDAO.comprobarUsuarios(txtusuario.getText())) {
+		if (!BBDD.comprobarUsuarios(txtusuario.getText())) {
 			fparent.setContentPane(parent);
 			try {
 				JOptionPane.showMessageDialog(null, "Registro Completado", "Nuevo Entrenador",
@@ -132,7 +134,7 @@ public class Register extends JPanel{
 			} catch (HeadlessException | IOException e1) {
 				e1.printStackTrace();
 			}
-			UsuarioDAO.register(txtusuario.getText(), new String(passwordField.getPassword()));
+			BBDD.register(txtusuario.getText(), new String(passwordField.getPassword()));
 			txtusuario.setText("");
 			passwordField.setText("");
 			passwordField_2.setText("");

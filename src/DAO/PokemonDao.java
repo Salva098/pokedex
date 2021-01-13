@@ -8,7 +8,7 @@ import Models.Pokemon;
 
 public class PokemonDAO extends BDDAO {
 
-	public static Pokemon getPokemonDAO(int idpokemon) {
+	public Pokemon getPokemonDAO(int idpokemon) {
 		Pokemon pk = null;
 		String tipos = "";
 		boolean next = false;
@@ -46,7 +46,7 @@ public class PokemonDAO extends BDDAO {
 		return pk;
 	}
 
-	public static boolean haySiguiente(int idpokemon) {
+	public boolean haySiguiente(int idpokemon) {
 		try {
 			ResultSet rs = stmt.executeQuery("select * from pokemon where n_pokemon = " + idpokemon);
 
@@ -59,7 +59,7 @@ public class PokemonDAO extends BDDAO {
 
 	}
 
-	public static boolean NewPokimon(Pokemon pokimon) {
+	public boolean NewPokimon(Pokemon pokimon) {
 		String[] tipos;
 		try {
 			PreparedStatement poke = conn.prepareStatement(
@@ -86,8 +86,8 @@ public class PokemonDAO extends BDDAO {
 				} else {
 					return false;
 				}
-
 			}
+			
 			for (int i = 0; i < tipos.length; i++) {
 				PreparedStatement tipoBD = conn
 						.prepareStatement("INSERT INTO pokemon_tipos (n_pokemon, idTipos) VALUES (?, ?)");
@@ -102,7 +102,7 @@ public class PokemonDAO extends BDDAO {
 		return true;
 	}
 
-	public static boolean existeTipo(Pokemon poke) {
+	public boolean existeTipo(Pokemon poke) {
 		String tipos[] = poke.getTipo().split(", ");
 		try {
 			for (int i = 0; i < tipos.length; i++) {
@@ -120,7 +120,7 @@ public class PokemonDAO extends BDDAO {
 		return true;
 	}
 
-	public static String geticonoTipo(String tipo) {
+	public String geticonoTipo(String tipo) {
 		try {
 			ResultSet rs = stmt.executeQuery("select tipoico from tipos where tipo like '" + tipo + "'");
 			if (rs.next()) {
@@ -134,7 +134,7 @@ public class PokemonDAO extends BDDAO {
 
 	}
 
-	public static int cuantosPokemonHay() {
+	public int cuantosPokemonHay() {
 		try {
 			ResultSet rs = stmt.executeQuery("select count(*) from pokemon ");
 			if (rs.next()) {
@@ -148,19 +148,20 @@ public class PokemonDAO extends BDDAO {
 		}
 		return -1;
 	}
-
-	public static void editPokemon(Pokemon Poke) {
+	public void borrarPokemon(Pokemon Poke) {
 		try {
 			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + Poke.getId_pokemon());
 			stmt.executeUpdate("DELETE FROM pokemon WHERE n_pokemon = " + Poke.getId_pokemon());
-			System.out.println("eliminado");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (NewPokimon(Poke)) {
+		
+	}
 
-		}
+	public void editPokemon(Pokemon Poke) {
+		borrarPokemon(Poke);
+		NewPokimon(Poke);
 	}
 
 }

@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class UsuarioDAO extends BDDAO {
 
-	public static boolean login(String usuario, String contrasena) {
+	public boolean login(String usuario, String contrasena) {
 
 		try  {
 			ResultSet rs = stmt.executeQuery("select * from login where usuario like '" + usuario
@@ -22,7 +22,7 @@ public class UsuarioDAO extends BDDAO {
 		return false;
 	}
 
-	public static boolean comprobarUsuarios(String usuario) {
+	public boolean comprobarUsuarios(String usuario) {
 		
 		try {
 			Statement stmt = conn.createStatement();
@@ -37,7 +37,7 @@ public class UsuarioDAO extends BDDAO {
 		return false;
 	}
 
-	public static void register(String usuario, String contrasena) {
+	public void register(String usuario, String contrasena) {
 
 		try {
 			PreparedStatement stmt = conn.prepareStatement("INSERT INTO login (usuario,contrasena) VALUES (?,?)");

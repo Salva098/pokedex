@@ -42,11 +42,13 @@ public class Login extends JPanel{
 	protected Cursor cursor;
 	protected ImageIcon imagenes;
 	protected JLabel lblfondo;
+	private UsuarioDAO BBDD;
 
 	/**
 	 * Create the application.
 	 */
 	public Login(JFrame fparent) {
+		BBDD=new UsuarioDAO();
 		try {
 			initialize();
 		} catch (MalformedURLException e) {
@@ -193,8 +195,8 @@ public class Login extends JPanel{
 	}
 
 	private void login() {
-		if (UsuarioDAO.login(txtusuario.getText(), new String(passwordField.getPassword()))) {
-			new Pokedex(fparent.getX(),fparent.getY());
+		if (BBDD.login(txtusuario.getText(), new String(passwordField.getPassword()))) {
+			new Pokedex(fparent.getX(),fparent.getY(),0);
 			fparent.dispose();
 		} else {
 			int n1 = (int) (Math.random() * 151 + 1), n2 = (int) (Math.random() * 151 + 1);

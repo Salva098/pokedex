@@ -7,16 +7,16 @@ import java.sql.Statement;
 
 public abstract class BDDAO {
 
-	protected static Connection conn = Connection();
-	protected static Statement stmt = Statement();
+	protected Connection conn = Connection();
+	protected Statement stmt = Statement();
 	
 	
-	private static Connection Connection() {
+	private Connection Connection() {
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://bvrp7p5nq78vomv3rqqa-mysql.services.clever-cloud.com:3306/bvrp7p5nq78vomv3rqqa",
-					"uib0crkjr2wfmixk", "cKdtzqt03ek2w81mh4H2");
+					"jdbc:mysql://localhost:3306/Pokemom?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+					"root", "123456");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -24,7 +24,7 @@ public abstract class BDDAO {
 		return conn;
 		
 	}
-	private static Statement Statement() {
+	private Statement Statement() {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();

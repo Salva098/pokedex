@@ -2,7 +2,6 @@ package View;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,11 +17,14 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import DAO.PokemonDAO;
 import Models.Pokemon;
+import Util.TextHelp;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -61,11 +63,20 @@ public class Pokedex {
 	private JLabel lblBuscarPoke;
 	private int id;
 	private JLabel lblEdit;
+	private TextHelp text;
+	private PokemonDAO BBDD;
 
 	/**
 	 * Create the application.
 	 */
-	public Pokedex(int x, int y) {
+	public Pokedex(int x, int y, int indice) {
+		BBDD= new PokemonDAO();
+		text = new TextHelp();
+		if (indice==0) {
+			id=1;
+		}else {
+			id=indice;
+		}
 		initialize();
 		frame.setBounds(x, y, 812, 643);
 	}
@@ -76,7 +87,6 @@ public class Pokedex {
 	private void initialize() {
 		frame = new JFrame();
 		com.sun.javafx.application.PlatformImpl.startup(()->{});
-		id=1;
 		loadcontent();
 		loadPokemon(id);
 		loadbuttons();
@@ -87,7 +97,7 @@ public class Pokedex {
 
 	private void loadPokemon(int id) {
 		String[] tipos;
-		pokimon = PokemonDAO.getPokemonDAO(id);
+		pokimon = BBDD.getPokemonDAO(id);
 		String nombre = pokimon.getNombre(),nombrepokedex="";
 		pkimg =new DecimalFormat("000");
 		if (nombre.equalsIgnoreCase("nidoranf")) {
@@ -102,23 +112,23 @@ public class Pokedex {
 			nombrepokedex=nombre;
 		}
 		
-		lblNombre.setText(nombrepokedex);
+		lblNombre.setText(text.toMayus(nombrepokedex));
 		lblNumero.setText(String.valueOf(pokimon.getId_pokemon()));
 		
-		lblHabilidad.setText(pokimon.getHabilidad());
+		lblHabilidad.setText(text.toMayus(pokimon.getHabilidad()));
 		lblAltura.setText(String.valueOf(pokimon.getAltura()));
 		lblPeso.setText(String.valueOf(pokimon.getPeso()));
-		lblCategoria.setText(pokimon.getCategoria());
+		lblCategoria.setText(text.toMayus(pokimon.getCategoria()));
 		tipos = pokimon.getTipo().split(", ");
 		try {
-			lblTipo_1.setIcon(new ImageIcon(new URL(PokemonDAO.geticonoTipo(tipos[0]))));
+			lblTipo_1.setIcon(new ImageIcon(new URL(BBDD.geticonoTipo(tipos[0]))));
 		} catch (MalformedURLException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		if (tipos.length==2) {
 			try {
-				lblTipo_2.setIcon(new ImageIcon(new URL(PokemonDAO.geticonoTipo(tipos[1]))));
+				lblTipo_2.setIcon(new ImageIcon(new URL(BBDD.geticonoTipo(tipos[1]))));
 			} catch (MalformedURLException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -181,10 +191,10 @@ public class Pokedex {
 	private void setListener() {
 		btnanterior.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (PokemonDAO.haySiguiente(--id)) {
+				if (BBDD.haySiguiente(--id)) {
 					loadPokemon(id);
 				}else {
-					id=PokemonDAO.cuantosPokemonHay();
+					id=BBDD.cuantosPokemonHay();
 					loadPokemon(id);
 				}
 					
@@ -193,7 +203,7 @@ public class Pokedex {
 
 		btnSiguiente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (PokemonDAO.haySiguiente(++id)) {
+				if (BBDD.haySiguiente(++id)) {
 					loadPokemon(id);
 				}else {
 					id=1;
@@ -253,22 +263,34 @@ public class Pokedex {
 	private void loadcontent() {
 		
 		lblBuscarPoke = new JLabel("Haz click para buscar");
+		
+		
 		lblBuscarPoke.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-					
-				int buscarid =Integer.parseInt(JOptionPane.showInputDialog(null,"Dime la id del pokemon",JOptionPane.QUESTION_MESSAGE));
-					if (PokemonDAO.haySiguiente(buscarid)) {
-						loadPokemon(buscarid);
-						id =buscarid;
-					}else {
-					try {
-						JOptionPane.showMessageDialog(null,"La id esa no existe", "Ese pokemon no se encuentra", JOptionPane.ERROR_MESSAGE, new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/spinda.gif")));
-					} catch (HeadlessException | IOException e1) {
-						e1.printStackTrace();
-					}
-				}
+				 String[] options1 = { "Pokemon ID", "Pokemon Nombre", "Pokemon Tipo" };
+				 JPanel panel = new JPanel();
+				 panel.add(new JLabel("Buscar: "));
+		           JTextField textField = new JTextField(10);
+		           panel.add(textField);
+		           int result = JOptionPane.showOptionDialog(null, panel, "Enter a Number",
+		                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+		                   null, options1, null);
+		           if (result == JOptionPane.YES_OPTION){
+		               JOptionPane.showMessageDialog(null, textField.getText());
+		           }
+//				int buscarid =Integer.parseInt(JOptionPane.showInputDialog(frame,"Dime la id del pokemon",JOptionPane.QUESTION_MESSAGE));
+//					if (PokemonDAO.haySiguiente(buscarid)) {
+//						loadPokemon(buscarid);
+//						id =buscarid;
+//					}else {
+//					try {
+//						JOptionPane.showMessageDialog(null,"La id esa no existe", "Ese pokemon no se encuentra", JOptionPane.ERROR_MESSAGE, new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/spinda.gif")));
+//					} catch (HeadlessException | IOException e1) {
+//						e1.printStackTrace();
+//					}
+//				}
 			}
 		});
 		
@@ -278,8 +300,8 @@ public class Pokedex {
 			e1.printStackTrace();
 		}
 		
-		lblEdit = new JLabel("Haz click para editar este Pokemon");
-		lblEdit.setHorizontalAlignment(SwingConstants.CENTER);
+		lblEdit = new JLabel("Haz click para editar el Pokemon");
+		lblEdit.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblEdit.setBounds(152, 138, 207, 19);
 		frame.getContentPane().add(lblEdit);
 		
