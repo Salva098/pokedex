@@ -16,8 +16,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
@@ -268,9 +266,9 @@ public class Pokedex {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-				 String[] options1 = { "Pokemon ID", "Pokemon Nombre", "Pokemon Tipo" };
-				 JPanel panel = new BuscarPokimon();
-				 JOptionPane.showMessageDialog(frame, panel);
+//				 String[] options1 = { "Pokemon ID", "Pokemon Nombre", "Pokemon Tipo" };
+//				 JPanel panel = new BuscarPokimon();
+//				 JOptionPane.showMessageDialog(frame, panel);
 //		           int result = JOptionPane.showmensageDialog(frame,panel , "Enter a Number",
 //		                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.DEFAULT_OPTION,
 //		                   null, options1, null);

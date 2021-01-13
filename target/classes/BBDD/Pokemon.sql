@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.1
+-- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 13-01-2021 a las 10:53:24
--- Versión del servidor: 10.4.11-MariaDB
--- Versión de PHP: 7.4.1
+-- Host: bvrp7p5nq78vomv3rqqa-mysql.services.clever-cloud.com:3306
+-- Generation Time: Jan 12, 2021 at 01:30 PM
+-- Server version: 8.0.13-3
+-- PHP Version: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,22 +19,23 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `pokemon`
+-- Database: `bvrp7p5nq78vomv3rqqa`
 --
-
+CREATE DATABASE IF NOT EXISTS `Pokemon` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `Pokemon`;
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `login`
+-- Table structure for table `login`
 --
 
 CREATE TABLE `login` (
   `usuario` varchar(255) NOT NULL,
   `contrasena` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Volcado de datos para la tabla `login`
+-- Dumping data for table `login`
 --
 
 INSERT INTO `login` (`usuario`, `contrasena`) VALUES
@@ -46,7 +47,7 @@ INSERT INTO `login` (`usuario`, `contrasena`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pokemon`
+-- Table structure for table `pokemon`
 --
 
 CREATE TABLE `pokemon` (
@@ -57,10 +58,10 @@ CREATE TABLE `pokemon` (
   `Peso` float DEFAULT NULL,
   `Descripcion` varchar(500) DEFAULT NULL,
   `Habilidad` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Volcado de datos para la tabla `pokemon`
+-- Dumping data for table `pokemon`
 --
 
 INSERT INTO `pokemon` (`n_pokemon`, `Nombre`, `Altura`, `Categoria`, `Peso`, `Descripcion`, `Habilidad`) VALUES
@@ -222,332 +223,266 @@ INSERT INTO `pokemon` (`n_pokemon`, `Nombre`, `Altura`, `Categoria`, `Peso`, `De
 (156, 'Quilava', 0.9, 'volcan', 19, 'Quilava mantiene a sus rivales a raya con la intensidad de sus llamas y las rafagas de aire igneo que producen. Tambien aprovecha su espectacular agilidad para esquivar ataques a la vez que abrasa al rival con sus llamas.', 'Mar llama'),
 (157, 'Typhlosion', 1.7, 'Volcan', 79.5, 'Typhlosion se oculta tras un tremulo haz de calor que crea mediante sus intensas y sofocantes llamaradas. Este Pokemon causa explosiones de fuego que reducen todo a cenizas.', 'Mar Llamas'),
 (158, 'Totodile', 0.6, 'Fauces', 9.5, 'Totodile tiene cuerpo pequeno, pero fuertes mandibulas. A veces, piensa que solo esta dando un mordisquito y hace unas heridas bastante considerables.', 'Torrente'),
-(159, 'Croconaw', 1.1, 'Fauces', 25, 'Una vez que Croconaw le ha clavado los colmillos a su presa, es imposible que escape porque los tiene hacia adentro como si fueran anzuelos. Cuando Croconaw hinca los dientes, no hay escapatoria.\n\n', 'Torrente'),
-(160, 'Feraligatr', 2.3, 'Fauces', 88.8, 'Feraligatr intimida a sus oponentes abriendo las grandes fauces que tiene. En combate, golpea el suelo bruscamente con las gruesas y fuertes patas traseras que tiene para cargar contra su rival a una velocidad de vertigo.', 'Torrente'),
-(161, 'Sentret', 0.8, 'Explorador', 6, 'Sentret no duerme a menos que otro haga guardia. El que hace de centinela lo despertara al minimo signo de peligro. Cuando este Pokemon se separa de su manada, es incapaz de echarse a dormir, presa del miedo.', 'Vista Lince'),
-(162, 'Furret', 1.8, 'Alargado', 32.5, 'Furret es de constitucion muy delgada. En combate le resulta util porque puede escabullirse con habilidad por cualquier huequito y escapar. A pesar de que tiene patas cortas, es agil y veloz.', 'Vista Lince'),
-(163, 'Hoothoot', 0.7, 'buho', 21.2, 'Se apoya en una sola pata y, cuando cambia de una a otra, se mueve tan rapido que apenas se percibe.', 'Vista lince'),
-(164, 'Noctowl', 1.6, 'buho', 40.8, 'Tiene los ojos muy desarrollados y puede ver con increible claridad en la oscuridad mas absoluta.', 'vista lince'),
-(165, 'Ledyba', 1, '5 Estrellas', 10.8, 'Este Pokemon no soporta el frio. En Alola, sin embargo, se encuentra en su elemento y se lo puede ver revoloteando vivaracho por doquier.', 'Enjambre'),
-(166, 'Ledian', 1.4, '5 Estrellas', 35.6, 'Se dice que los motivos que luce en el dorso guardan relacion con las estrellas, aunque esta teoria sigue siendo todo un misterio.', 'Enjambre'),
-(167, 'Spinarak', 0.5, 'Escupehilo', 8.5, 'Segrega un hilo de increible resistencia con el que teje su tela, capaz de soportar el peso de una roca de 10 kg sin romperse.', 'Enjambre'),
-(168, 'Ariados', 1.1, 'pata larga', 33.5, 'Ronda por la noche en busca de presas a las que inmoviliza con su hilo para luego clavarles los colmillos.', 'enjambre'),
-(169, 'Crobat', 1.8, 'murcielago', 75, 'Sus patas se han convertido en alas. Se lanza sobre su presa en un vuelo silencioso a alta velocidad y le clava los colmillos en la nuca.', 'foco interno'),
-(170, 'Chinchou', 0.5, 'rape', 12, 'Sus otrora dos aletas han evolucionado a las actuales antenas y ambas tienen carga positiva y negativa.', 'iluminacion'),
-(171, 'Lanturn', 1.2, 'luz', 22.5, 'La luz que emite es tan brillante que puede iluminar la superficie del mar desde unos 5 km de profundidad.', 'iluminacion'),
-(172, 'Pichu', 0.3, 'ratoncito', 2, 'A pesar de su pequeno tamano, puede soltar descargas capaces de electrocutar a un adulto, si bien el tambien acaba sobresaltado.', 'electricidad'),
-(173, 'Cleffa', 0.3, 'estrella', 3, 'Los lugarenos rumorean que suele encontrarse en lugares donde han caido estrellas fugaces.', 'gran encanto'),
-(174, 'Igglybuff', 0.3, 'globo', 1, 'Le apasiona cantar. Su cuerpo suave y esponjoso desprende un aroma ligeramente dulce.', 'gran encanto'),
-(175, 'Togepi', 0.3, 'bolaclavos', 1.5, 'El cascaron parece estar lleno de alegria. Dicen que trae buena suerte si se le trata con carino.', 'dicha'),
-(176, 'Togetic', 0.6, 'felicidad', 3.2, 'Dicen que se le aparece a la gente de buen corazon y la inunda de felicidad.', 'dicha'),
-(177, 'Natu', 0.2, 'pajarito', 2, 'Trepa con gran habilidad por el tronco de los arboles, donde aprovecha para picotear los brotes nuevos.', 'sincronia'),
-(178, 'Xatu', 1.5, 'mistico', 15, 'Dicen que se mantiene practicamente inmovil y en silencio porque observa el pasado y el futuro al mismo tiempo.', 'sincronia'),
-(179, 'Mareep', 0.6, 'lana', 7.8, 'Las prendas elaboradas con la lana de Mareep se cargan facilmente de electricidad estatica y requieren de tratamientos especiales.', 'electrica'),
-(180, 'Flaaffy', 0.8, 'lana', 13.3, 'Las zonas de su piel desprovistas de lana no transmiten electricidad, por lo que pueden acariciarse sin miedo.', 'electricidad'),
-(181, 'Ampharos', 1.4, 'luz', 61.5, 'La luz que emite su cola puede verse desde el espacio, delatando su presencia a todos. Es por eso que normalmente la mantiene apagada.', 'electricidad'),
-(182, 'Bellossom', 0.4, 'flor', 5.8, 'Abunda en los tropicos. Al bailar, sus petalos se rozan y emiten un agradable sonido.', 'clorofila'),
-(183, 'Marill', 0.4, 'raton agua', 8.5, 'La punta redonda de su cola hace las veces de flotador. En ella almacena abundantes nutrientes en forma de aceite.', 'sebo'),
-(184, 'Azumarill', 0.8, 'conejo agua', 28.5, 'Pasa la mayor parte del tiempo en el agua. Los dias despejados, aprovecha para tomar el sol flotando en la superficie.', 'sebo'),
-(185, 'Sudowoodo', 1.2, 'imitacion', 38, 'Quien vea agitarse un arbol sin que sople el viento habra encontrado un Sudowoodo. En los dias lluviosos, sin embargo, se esconde.', 'cabeza roca');
+(159, 'Croconaw', 1.1, 'Fauces', 25, 'Una vez que Croconaw le ha clavado los colmillos a su presa, es imposible que escape porque los tiene hacia adentro como si fueran anzuelos. Cuando Croconaw hinca los dientes, no hay escapatoria.\n\n', 'Torrente');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pokemon_tipos`
+-- Table structure for table `pokemon_tipos`
 --
 
 CREATE TABLE `pokemon_tipos` (
   `n_pokemon` int(11) NOT NULL,
   `idTipos` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Volcado de datos para la tabla `pokemon_tipos`
+-- Dumping data for table `pokemon_tipos`
 --
 
 INSERT INTO `pokemon_tipos` (`n_pokemon`, `idTipos`) VALUES
-(1, 10),
-(1, 15),
-(2, 10),
-(2, 15),
-(3, 10),
-(3, 15),
-(4, 5),
-(5, 5),
-(6, 5),
-(6, 16),
+(61, 0),
+(81, 0),
+(82, 0),
 (7, 1),
 (8, 1),
 (9, 1),
-(10, 2),
-(11, 2),
-(12, 2),
-(12, 16),
-(13, 2),
-(13, 15),
-(14, 2),
-(14, 15),
-(15, 2),
-(15, 15),
-(16, 9),
-(16, 16),
-(17, 9),
-(17, 16),
-(18, 9),
-(18, 16),
-(19, 9),
-(20, 9),
-(21, 9),
-(21, 16),
-(22, 9),
-(22, 16),
-(23, 15),
-(24, 15),
-(25, 4),
-(26, 4),
-(27, 14),
-(28, 14),
-(29, 15),
-(30, 15),
-(31, 14),
-(31, 15),
-(32, 15),
-(33, 15),
-(34, 14),
-(34, 15),
-(35, 6),
-(36, 6),
-(37, 5),
-(38, 5),
-(39, 6),
-(39, 9),
-(40, 6),
-(40, 9),
-(41, 15),
-(41, 16),
-(42, 15),
-(42, 16),
-(43, 10),
-(43, 15),
-(44, 10),
-(44, 15),
-(45, 10),
-(45, 15),
-(46, 2),
-(46, 10),
-(47, 2),
-(47, 10),
-(48, 2),
-(48, 15),
-(49, 2),
-(49, 15),
-(50, 14),
-(51, 14),
-(52, 9),
-(53, 9),
 (54, 1),
 (55, 1),
-(56, 8),
-(57, 8),
-(58, 5),
-(59, 5),
 (60, 1),
-(61, 0),
 (62, 1),
-(62, 8),
-(63, 11),
-(64, 11),
-(65, 11),
-(66, 8),
-(67, 8),
-(68, 8),
-(69, 10),
-(69, 15),
-(70, 10),
-(70, 15),
-(71, 10),
-(71, 15),
 (72, 1),
-(72, 15),
 (73, 1),
-(73, 15),
-(74, 12),
-(74, 14),
-(75, 12),
-(75, 14),
-(76, 12),
-(76, 14),
-(77, 5),
-(78, 5),
 (79, 1),
-(79, 11),
 (80, 1),
-(80, 11),
-(81, 0),
-(81, 4),
-(82, 0),
-(82, 4),
-(83, 9),
-(83, 16),
-(84, 9),
-(84, 16),
-(85, 9),
-(85, 16),
 (86, 1),
 (87, 1),
-(87, 7),
-(88, 15),
-(89, 15),
 (90, 1),
 (91, 1),
-(91, 7),
-(92, 15),
-(92, 17),
-(93, 15),
-(93, 17),
-(94, 15),
-(94, 17),
-(95, 12),
-(95, 14),
-(96, 11),
-(97, 11),
 (98, 1),
 (99, 1),
-(100, 4),
-(101, 4),
-(102, 10),
-(102, 11),
-(103, 10),
-(103, 11),
-(104, 14),
-(105, 14),
-(106, 8),
-(107, 8),
-(108, 9),
-(109, 15),
-(110, 15),
-(111, 12),
-(111, 14),
-(112, 12),
-(112, 14),
-(113, 9),
-(114, 10),
-(115, 9),
 (116, 1),
 (117, 1),
 (118, 1),
 (119, 1),
 (120, 1),
 (121, 1),
-(121, 11),
-(122, 6),
-(122, 11),
-(123, 2),
-(123, 16),
-(124, 7),
-(124, 11),
-(125, 4),
-(126, 5),
-(127, 2),
-(128, 9),
 (129, 1),
 (130, 1),
-(130, 16),
 (131, 1),
-(131, 7),
-(132, 9),
-(133, 9),
 (134, 1),
-(135, 4),
-(136, 5),
-(137, 9),
 (138, 1),
-(138, 12),
 (139, 1),
-(139, 12),
 (140, 1),
-(140, 12),
 (141, 1),
-(141, 12),
-(142, 12),
-(142, 16),
-(143, 9),
-(144, 7),
-(144, 16),
-(145, 4),
-(145, 16),
-(146, 5),
-(146, 16),
+(158, 1),
+(159, 1),
+(10, 2),
+(11, 2),
+(12, 2),
+(13, 2),
+(14, 2),
+(15, 2),
+(46, 2),
+(47, 2),
+(48, 2),
+(49, 2),
+(123, 2),
+(127, 2),
 (147, 3),
 (148, 3),
 (149, 3),
-(149, 16),
-(150, 11),
-(151, 11),
-(152, 10),
-(152, 15),
-(153, 10),
-(154, 10),
+(25, 4),
+(26, 4),
+(81, 4),
+(82, 4),
+(100, 4),
+(101, 4),
+(125, 4),
+(135, 4),
+(145, 4),
+(4, 5),
+(5, 5),
+(6, 5),
+(37, 5),
+(38, 5),
+(58, 5),
+(59, 5),
+(77, 5),
+(78, 5),
+(126, 5),
+(136, 5),
+(146, 5),
 (155, 5),
 (156, 5),
 (157, 5),
-(158, 1),
-(159, 1),
-(160, 1),
-(161, 9),
-(162, 9),
-(163, 9),
-(163, 16),
-(164, 9),
-(164, 16),
-(165, 2),
-(165, 16),
-(166, 2),
-(166, 16),
-(167, 2),
-(167, 15),
-(168, 2),
-(168, 15),
-(169, 15),
-(169, 16),
-(170, 1),
-(170, 4),
-(171, 1),
-(171, 4),
-(172, 4),
-(173, 6),
-(174, 6),
-(174, 9),
-(175, 6),
-(176, 6),
-(176, 16),
-(177, 11),
-(178, 11),
-(178, 16),
-(179, 4),
-(180, 4),
-(181, 4),
-(182, 10),
-(183, 1),
-(183, 6),
-(184, 1),
-(184, 6),
-(185, 12);
+(35, 6),
+(36, 6),
+(39, 6),
+(40, 6),
+(122, 6),
+(87, 7),
+(91, 7),
+(124, 7),
+(131, 7),
+(144, 7),
+(56, 8),
+(57, 8),
+(62, 8),
+(66, 8),
+(67, 8),
+(68, 8),
+(106, 8),
+(107, 8),
+(16, 9),
+(17, 9),
+(18, 9),
+(19, 9),
+(20, 9),
+(21, 9),
+(22, 9),
+(39, 9),
+(40, 9),
+(52, 9),
+(53, 9),
+(83, 9),
+(84, 9),
+(85, 9),
+(108, 9),
+(113, 9),
+(115, 9),
+(128, 9),
+(132, 9),
+(133, 9),
+(137, 9),
+(143, 9),
+(1, 10),
+(2, 10),
+(3, 10),
+(43, 10),
+(44, 10),
+(45, 10),
+(46, 10),
+(47, 10),
+(69, 10),
+(70, 10),
+(71, 10),
+(102, 10),
+(103, 10),
+(114, 10),
+(152, 10),
+(153, 10),
+(154, 10),
+(63, 11),
+(64, 11),
+(65, 11),
+(79, 11),
+(80, 11),
+(96, 11),
+(97, 11),
+(102, 11),
+(103, 11),
+(121, 11),
+(122, 11),
+(124, 11),
+(150, 11),
+(151, 11),
+(74, 12),
+(75, 12),
+(76, 12),
+(95, 12),
+(111, 12),
+(112, 12),
+(138, 12),
+(139, 12),
+(140, 12),
+(141, 12),
+(142, 12),
+(27, 14),
+(28, 14),
+(31, 14),
+(34, 14),
+(50, 14),
+(51, 14),
+(74, 14),
+(75, 14),
+(76, 14),
+(95, 14),
+(104, 14),
+(105, 14),
+(111, 14),
+(112, 14),
+(1, 15),
+(2, 15),
+(3, 15),
+(13, 15),
+(14, 15),
+(15, 15),
+(23, 15),
+(24, 15),
+(29, 15),
+(30, 15),
+(31, 15),
+(32, 15),
+(33, 15),
+(34, 15),
+(41, 15),
+(42, 15),
+(43, 15),
+(44, 15),
+(45, 15),
+(48, 15),
+(49, 15),
+(69, 15),
+(70, 15),
+(71, 15),
+(72, 15),
+(73, 15),
+(88, 15),
+(89, 15),
+(92, 15),
+(93, 15),
+(94, 15),
+(109, 15),
+(110, 15),
+(152, 15),
+(6, 16),
+(12, 16),
+(16, 16),
+(17, 16),
+(18, 16),
+(21, 16),
+(22, 16),
+(41, 16),
+(42, 16),
+(83, 16),
+(84, 16),
+(85, 16),
+(123, 16),
+(130, 16),
+(142, 16),
+(144, 16),
+(145, 16),
+(146, 16),
+(149, 16),
+(92, 17),
+(93, 17),
+(94, 17);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipos`
+-- Table structure for table `tipos`
 --
 
 CREATE TABLE `tipos` (
   `idTipos` int(11) NOT NULL,
   `Tipo` varchar(255) DEFAULT NULL,
   `TipoIco` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Volcado de datos para la tabla `tipos`
+-- Dumping data for table `tipos`
 --
 
 INSERT INTO `tipos` (`idTipos`, `Tipo`, `TipoIco`) VALUES
@@ -571,43 +506,43 @@ INSERT INTO `tipos` (`idTipos`, `Tipo`, `TipoIco`) VALUES
 (17, 'fantasma', 'https://static.wikia.nocookie.net/espokemon/images/4/47/Tipo_fantasma.gif');
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `login`
+-- Indexes for table `login`
 --
 ALTER TABLE `login`
   ADD PRIMARY KEY (`usuario`);
 
 --
--- Indices de la tabla `pokemon`
+-- Indexes for table `pokemon`
 --
 ALTER TABLE `pokemon`
   ADD PRIMARY KEY (`n_pokemon`);
 
 --
--- Indices de la tabla `pokemon_tipos`
+-- Indexes for table `pokemon_tipos`
 --
 ALTER TABLE `pokemon_tipos`
   ADD PRIMARY KEY (`n_pokemon`,`idTipos`),
   ADD KEY `idTipos_idx` (`idTipos`);
 
 --
--- Indices de la tabla `tipos`
+-- Indexes for table `tipos`
 --
 ALTER TABLE `tipos`
   ADD PRIMARY KEY (`idTipos`);
 
 --
--- Restricciones para tablas volcadas
+-- Constraints for dumped tables
 --
 
 --
--- Filtros para la tabla `pokemon_tipos`
+-- Constraints for table `pokemon_tipos`
 --
 ALTER TABLE `pokemon_tipos`
-  ADD CONSTRAINT `idTipos` FOREIGN KEY (`idTipos`) REFERENCES `tipos` (`idTipos`),
+  ADD CONSTRAINT `idTipos` FOREIGN KEY (`idTipos`) REFERENCES `tipos` (`idtipos`),
   ADD CONSTRAINT `n_pokemon` FOREIGN KEY (`n_pokemon`) REFERENCES `pokemon` (`n_pokemon`);
 COMMIT;
 
