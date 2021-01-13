@@ -15,8 +15,8 @@ public abstract class BDDAO {
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/Pokemom?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
-					"root", "123456");
+					"jdbc:mysql://localhost:3306/Pokemon?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+					"Root", "rlM8nbpH63V9JMgh");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

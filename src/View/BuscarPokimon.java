@@ -6,21 +6,23 @@ import java.net.URL;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.JButton;
-import javax.swing.JList;
 
 /**
  * @author Salva
  *
  */
-public class BuscarPokimon {
+public class BuscarPokimon extends JPanel{
 
-	private JFrame frame;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JLabel lblBuscarPokemonImg;
 	private JTextField textField;
 	private JRadioButton rdbtnNewRadioButton;
@@ -39,12 +41,10 @@ public class BuscarPokimon {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
 		setComponents();
 		setButtons();
 		setLiseners();
 		setFrame();
-		frame.setVisible(true);
 		
 	}
 	
@@ -52,18 +52,18 @@ public class BuscarPokimon {
 		ButtonGroup grupo1 = new ButtonGroup();
 			rdbtnNewRadioButton = new JRadioButton("Id Pokemon");
 			rdbtnNewRadioButton.setHorizontalAlignment(SwingConstants.CENTER);
-			rdbtnNewRadioButton.setBounds(160, 144, 112, 23);
-			frame.getContentPane().add(rdbtnNewRadioButton);
+			rdbtnNewRadioButton.setBounds(120, 140, 112, 23);
+			add(rdbtnNewRadioButton);
 
 			rdbtnNewRadioButton_1 = new JRadioButton("Pokemon");
 			rdbtnNewRadioButton_1.setHorizontalAlignment(SwingConstants.CENTER);
-			rdbtnNewRadioButton_1.setBounds(274, 144, 105, 23);
-			frame.getContentPane().add(rdbtnNewRadioButton_1);
+			rdbtnNewRadioButton_1.setBounds(234, 140, 105, 23);
+			add(rdbtnNewRadioButton_1);
 
 			rdbtnNewRadioButton_2 = new JRadioButton("Tipo");
 			rdbtnNewRadioButton_2.setHorizontalAlignment(SwingConstants.CENTER);
-			rdbtnNewRadioButton_2.setBounds(381, 144, 87, 23);
-			frame.getContentPane().add(rdbtnNewRadioButton_2);
+			rdbtnNewRadioButton_2.setBounds(341, 140, 87, 23);
+			add(rdbtnNewRadioButton_2);
 			
 			grupo1.add(rdbtnNewRadioButton);
 			grupo1.add(rdbtnNewRadioButton_1);
@@ -75,19 +75,16 @@ public class BuscarPokimon {
 	}
 	
 	private void setFrame() {
-		frame.setBounds(100, 100, 600, 340);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		setLayout(null);
 		
 		textField = new JTextField();
-		textField.setBounds(172, 107, 296, 20);
-		frame.getContentPane().add(textField);
+		textField.setBounds(132, 103, 296, 20);
+		add(textField);
 		textField.setColumns(10);
 		
 		JButton btnBuscar = new JButton("Buscar Pokemon");
 		btnBuscar.setBounds(381, 270, 125, 30);
-		frame.getContentPane().add(btnBuscar);
-		frame.setResizable(false);
+		add(btnBuscar);
 	}
 	
 	private void setComponents() {
@@ -98,14 +95,14 @@ public class BuscarPokimon {
 			e.printStackTrace();
 		}
 		lblBuscarPokemonImg.setHorizontalAlignment(SwingConstants.CENTER);
-		lblBuscarPokemonImg.setBounds(10, 11, 564, 80);
-		frame.getContentPane().add(lblBuscarPokemonImg);
+		lblBuscarPokemonImg.setBounds(0, 11, 440, 80);
+		add(lblBuscarPokemonImg);
 		
 		JLabel lblBuscar = new JLabel("Buscar:");
 		lblBuscar.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblBuscar.setHorizontalAlignment(SwingConstants.CENTER);
-		lblBuscar.setBounds(50, 100, 112, 30);
-		frame.getContentPane().add(lblBuscar);
+		lblBuscar.setBounds(10, 96, 112, 30);
+		add(lblBuscar);
 		
 	}
 }

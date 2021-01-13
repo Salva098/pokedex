@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import DAO.PokemonDAO;
@@ -270,16 +269,11 @@ public class Pokedex {
 			public void mouseClicked(MouseEvent e) {
 				
 				 String[] options1 = { "Pokemon ID", "Pokemon Nombre", "Pokemon Tipo" };
-				 JPanel panel = new JPanel();
-				 panel.add(new JLabel("Buscar: "));
-		           JTextField textField = new JTextField(10);
-		           panel.add(textField);
-		           int result = JOptionPane.showOptionDialog(null, panel, "Enter a Number",
-		                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-		                   null, options1, null);
-		           if (result == JOptionPane.YES_OPTION){
-		               JOptionPane.showMessageDialog(null, textField.getText());
-		           }
+				 JPanel panel = new BuscarPokimon();
+				 JOptionPane.showMessageDialog(frame, panel);
+//		           int result = JOptionPane.showmensageDialog(frame,panel , "Enter a Number",
+//		                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.DEFAULT_OPTION,
+//		                   null, options1, null);
 //				int buscarid =Integer.parseInt(JOptionPane.showInputDialog(frame,"Dime la id del pokemon",JOptionPane.QUESTION_MESSAGE));
 //					if (PokemonDAO.haySiguiente(buscarid)) {
 //						loadPokemon(buscarid);
