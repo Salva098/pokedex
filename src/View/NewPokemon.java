@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 import DAO.PokemonDAO;
 import Models.Pokemon;
 import Util.TextHelp;
+import javax.swing.JList;
 
 public class NewPokemon {
 
@@ -48,12 +49,12 @@ public class NewPokemon {
 	private JTextField txtPeso;
 	private JTextField txtCategoria;
 	private JTextField txtHabilidad;
-	private JTextField txtTipo;
 	private JButton btnedit;
 	private DecimalFormat pkimg;
 	private boolean edit;
 	private TextHelp text;
 	private PokemonDAO BBDD;
+	private JList list;
 	
 	/**
 	 * Create the application.
@@ -287,6 +288,11 @@ public class NewPokemon {
 	}
 
 	private void loadcontent() {
+		
+		list = new JList();
+		list.setVisibleRowCount(4);
+		list.setBounds(604, 380, 111, 57);
+		frame.getContentPane().add(list);
 
 		btnedit = new JButton("Editar");
 		btnedit.setBounds(467, 547, 89, 23);
@@ -299,11 +305,6 @@ public class NewPokemon {
 		btnCrear = new JButton("Crear");
 		btnCrear.setBounds(467, 547, 89, 23);
 		frame.getContentPane().add(btnCrear);
-
-		txtTipo = new JTextField();
-		txtTipo.setBounds(604, 380, 111, 20);
-		frame.getContentPane().add(txtTipo);
-		txtTipo.setColumns(10);
 
 		txtHabilidad = new JTextField();
 		txtHabilidad.setBounds(604, 349, 111, 20);
@@ -409,5 +410,4 @@ public class NewPokemon {
 		frame.getContentPane().add(lblDatosPokemon);
 
 	}
-
 }

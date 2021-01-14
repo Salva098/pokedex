@@ -160,8 +160,7 @@ public class PokemonDAO extends BDDAO {
 	}
 
 	public void editPokemon(Pokemon Poke) {
-		borrarPokemon(Poke);
-		NewPokimon(Poke);
+		
 	}
 
 }
