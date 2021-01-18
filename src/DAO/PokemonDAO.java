@@ -19,7 +19,7 @@ public class PokemonDAO extends BDDAO {
 			if (next) {
 
 				pk = new Pokemon(idpokemon, pokemon.getString(2), pokemon.getFloat(3), pokemon.getString(4),
-						pokemon.getFloat(5), pokemon.getString(6), pokemon.getString(7), null);
+						pokemon.getFloat(5), pokemon.getString(6), pokemon.getString(7), null,pokemon.getString(8),pokemon.getString(9),pokemon.getString(10));
 			}
 
 			ResultSet tipo = stmt.executeQuery(
@@ -206,6 +206,19 @@ public class PokemonDAO extends BDDAO {
 			
 			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + Poke.getId_pokemon());
 			añadirTipos(Poke);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void insertarPokemonimagenysonido(String imagen, String gif, String sonido, int idpokemon) {
+		try {
+			PreparedStatement edit = conn.prepareStatement("UPDATE pokemon SET ImgPoke = ?, IcoPoke = ?, SonidoPoke = ? WHERE (n_pokemon = ?)");
+			edit.setString(1,imagen);
+			edit.setString(2,gif);
+			edit.setString(3,sonido);
+			edit.setInt(4, idpokemon);
+			edit.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -3,11 +3,8 @@ package View;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.HeadlessException;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -98,6 +95,7 @@ public class NewPokemon{
 		txtAltura.setText(String.valueOf(poke.getAltura()));
 		txtPeso.setText(String.valueOf(poke.getPeso()));
 		txtCategoria.setText(poke.getCategoria());
+		
 		txtHabilidad.setText(poke.getHabilidad());
 		listaTipos.setSelectedIndices(BBDD.arrTipoSelecionado(poke));
 		textAreaDescrp.setText(poke.getDescripcion());
@@ -121,7 +119,8 @@ public class NewPokemon{
 		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
 				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
 				&& !(arrTipos.length==0) && !textAreaDescrp.getText().isBlank()) {
-			
+			if (!(arrTipos.length>2)) {
+				
 			int ntipos=0;
 			String tipos="";
 			for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
@@ -180,6 +179,15 @@ public class NewPokemon{
 					e.printStackTrace();
 				}
 			}
+			}else {
+				
+				try {
+					JOptionPane.showMessageDialog(frame, "Has seleccionado mas de un tipo","ERROR en el tipo", JOptionPane.ERROR_MESSAGE, new ImageIcon(new URL("https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif")) );
+				} catch (HeadlessException | MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} else {
 			try {
 				JOptionPane.showMessageDialog(frame, "No has rellenado los campos", "Has invocado un grimer", 0,
@@ -196,7 +204,7 @@ public class NewPokemon{
 		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
 				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
 				&& !(arrTipos.length==0) && !textAreaDescrp.getText().isBlank()) {
-
+			if (!(arrTipos.length>2)) {
 			int ntipos=0;
 			String tipos="";
 			for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
@@ -207,6 +215,9 @@ public class NewPokemon{
 					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]) + ", " + tipos;
 				}
 			}
+			String imagen=JOptionPane.showInputDialog(frame, message, title, messageType, icon, selectionValues, initialSelectionValue);
+			String gif;
+			String sonido;
 			
 			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
 					Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
@@ -248,18 +259,27 @@ public class NewPokemon{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else {
-				try {
-					JOptionPane.showMessageDialog(frame, "No has rellenado los campos", "Has invocado un grimer", 0,
-							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
-				} catch (HeadlessException | MalformedURLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			}
+
+		}else {
+			
+			try {
+				JOptionPane.showMessageDialog(frame, "Has seleccionado mas de un tipo","ERROR en el tipo", JOptionPane.ERROR_MESSAGE, new ImageIcon(new URL("https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif")) );
+			} catch (HeadlessException | MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}}else {
+			try {
+				JOptionPane.showMessageDialog(frame, "No has rellenado los campos", "Has invocado un grimer", 0,
+						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
+			} catch (HeadlessException | MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
+		}
 
-	}
 
 	private void setLiseners() {
 		btnCrear.addActionListener(new ActionListener() {

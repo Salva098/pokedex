@@ -64,6 +64,11 @@ public class Pokedex implements KeyListener{
 	private JLabel lblEdit;
 	private TextHelp text;
 	private PokemonDAO BBDD;
+	
+	
+	private String sonido;
+	private String imagen;
+	private String gif;
 
 	/**
 	 * Create the application.
@@ -113,7 +118,7 @@ public class Pokedex implements KeyListener{
 		}else {
 			nombrepokedex=nombre;
 		}
-		
+		sonido="https://play.pokemonshowdown.com/audio/cries/"+pokimon.getNombre().toLowerCase()+".mp3";
 		lblNombre.setText(text.toMayus(nombrepokedex));
 		lblNumero.setText(String.valueOf(pokimon.getId_pokemon()));
 		
@@ -137,6 +142,7 @@ public class Pokedex implements KeyListener{
 			}
 		}else {
 			try {
+				
 				lblTipo_2.setIcon(new ImageIcon(new URL("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9c64cfe3-bb3b-4ae8-b5a6-d2f39d21ff87/d3jme6i-8c702ad4-4b7a-4763-9901-99f8b4f038b0.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3sicGF0aCI6IlwvZlwvOWM2NGNmZTMtYmIzYi00YWU4LWI1YTYtZDJmMzlkMjFmZjg3XC9kM2ptZTZpLThjNzAyYWQ0LTRiN2EtNDc2My05OTAxLTk5ZjhiNGYwMzhiMC5wbmcifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6ZmlsZS5kb3dubG9hZCJdfQ.JAMbat4sBPIi4yMAvudrMIWf7vOdCgts3vn-JqFq1Oo")));
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
@@ -146,14 +152,16 @@ public class Pokedex implements KeyListener{
 		textAreaDescrp.setText(pokimon.getDescripcion());
 		
 		try {
-			lblpokeimg.setIcon(new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/ani/"+nombre.toLowerCase()+".gif")));
+			gif="https://play.pokemonshowdown.com/sprites/ani/"+nombre.toLowerCase()+".gif";
+			lblpokeimg.setIcon(new ImageIcon(new URL(gif)));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
 		try {
-			lblImgPokemon.setIcon(new ImageIcon(new URL("https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"+pkimg.format(id)+".png")));
+			imagen="https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"+pkimg.format(id)+".png";
+			lblImgPokemon.setIcon(new ImageIcon(new URL(imagen)));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -420,6 +428,7 @@ public class Pokedex implements KeyListener{
 		lblImgPokemon.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				
 				mediaPlayer = new MediaPlayer(new Media("https://play.pokemonshowdown.com/audio/cries/"+pokimon.getNombre().toLowerCase()+".mp3"));
 				mediaPlayer.play();
 			}
@@ -441,8 +450,9 @@ public class Pokedex implements KeyListener{
 		}else {
 			id=1;
 			loadPokemon(id);
+			
 		}
-	}
+s	}
 	private void anterior() {
 		if (BBDD.haySiguiente(--id)) {
 			loadPokemon(id);

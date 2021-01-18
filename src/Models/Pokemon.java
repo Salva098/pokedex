@@ -17,11 +17,37 @@ public class Pokemon {
 	private String descripcion;
 	private String habilidad;
 	private String tipo;
-
+	private String imagen;
+	private String gif;
+	private String sonido;
 	
 
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+
+	public String getGif() {
+		return gif;
+	}
+
+	public void setGif(String gif) {
+		this.gif = gif;
+	}
+
+	public String getSonido() {
+		return sonido;
+	}
+
+	public void setSonido(String sonido) {
+		this.sonido = sonido;
+	}
+
 	public Pokemon(int id_pokemon, String nombre, float altura, String categoria, float peso, String descripcion,
-			String habilidad, String tipo) {
+			String habilidad, String tipo, String imagen, String gif, String sonido) {
 		super();
 		this.id_pokemon = id_pokemon;
 		this.nombre = nombre;
@@ -31,6 +57,9 @@ public class Pokemon {
 		this.descripcion = descripcion;
 		this.habilidad = habilidad;
 		this.tipo = tipo;
+		this.imagen=imagen;
+		this.gif=gif;
+		this.sonido=sonido;
 	}
 	
 	public String getTipo() {
