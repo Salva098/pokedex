@@ -3,8 +3,11 @@ package View;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.HeadlessException;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +18,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -23,9 +28,8 @@ import javax.swing.SwingConstants;
 import DAO.PokemonDAO;
 import Models.Pokemon;
 import Util.TextHelp;
-import javax.swing.JList;
 
-public class NewPokemon {
+public class NewPokemon{
 
 	private JFrame frame;
 	private JLabel lblfondo;
@@ -54,7 +58,8 @@ public class NewPokemon {
 	private boolean edit;
 	private TextHelp text;
 	private PokemonDAO BBDD;
-	private JList list;
+	private JList<String> listaTipos;
+	private JScrollPane scrollPane;
 	
 	/**
 	 * Create the application.
@@ -94,7 +99,7 @@ public class NewPokemon {
 		txtPeso.setText(String.valueOf(poke.getPeso()));
 		txtCategoria.setText(poke.getCategoria());
 		txtHabilidad.setText(poke.getHabilidad());
-		txtTipo.setText(poke.getTipo());
+		listaTipos.setSelectedIndices(BBDD.arrTipoSelecionado(poke));
 		textAreaDescrp.setText(poke.getDescripcion());
 		pkimg = new DecimalFormat("000");
 		try {
@@ -112,14 +117,26 @@ public class NewPokemon {
 	}
 
 	private void newPokemonBD() {
+		int [] arrTipos =listaTipos.getSelectedIndices(); 
 		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
 				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
-				&& !txtTipo.getText().isBlank() || !textAreaDescrp.getText().isBlank()) {
-
+				&& !(arrTipos.length==0) && !textAreaDescrp.getText().isBlank()) {
+			
+			int ntipos=0;
+			String tipos="";
+			for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
+				ntipos++;
+				if (ntipos == 1) {
+					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]);
+				} else {
+					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]) + ", " + tipos;
+				}
+			}
+			
 			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
 					Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
 					Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
-					text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(txtTipo.getText()));
+					text.quitarTildes(txtHabilidad.getText()),text.quitarTildes(tipos));
 			int eleccion = 0;
 			try {
 				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
@@ -141,8 +158,7 @@ public class NewPokemon {
 					txtPeso.setText("");
 					textAreaDescrp.setText("");
 					txtHabilidad.setText("");
-					txtTipo.setText("");
-
+					listaTipos.clearSelection();
 				} else {
 					try {
 						JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
@@ -176,15 +192,26 @@ public class NewPokemon {
 	}
 
 	private void editPokemonBD() {
-
+		int [] arrTipos =listaTipos.getSelectedIndices(); 
 		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
 				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
-				&& !txtTipo.getText().isBlank() || !textAreaDescrp.getText().isBlank()) {
+				&& !(arrTipos.length==0) && !textAreaDescrp.getText().isBlank()) {
 
+			int ntipos=0;
+			String tipos="";
+			for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
+				ntipos++;
+				if (ntipos == 1) {
+					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]);
+				} else {
+					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]) + ", " + tipos;
+				}
+			}
+			
 			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
 					Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
 					Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
-					text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(txtTipo.getText()));
+					text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(tipos));
 
 			int eleccion = 0;
 			try {
@@ -265,6 +292,9 @@ public class NewPokemon {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		
+		
+		
 		lblfondo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblfondo.setBounds(0, 0, 796, 608);
 		frame.getContentPane().add(lblfondo);
@@ -289,11 +319,15 @@ public class NewPokemon {
 
 	private void loadcontent() {
 		
-		list = new JList();
-		list.setVisibleRowCount(4);
-		list.setBounds(604, 380, 111, 57);
-		frame.getContentPane().add(list);
+		listaTipos = new JList<String>(BBDD.arrTipos());
+		listaTipos.setVisibleRowCount(4);
+		listaTipos.setBounds(604, 380, 96, 288);
 
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(604, 380, 96, 57);
+		scrollPane.setViewportView(listaTipos);
+		frame.getContentPane().add(scrollPane);
+		
 		btnedit = new JButton("Editar");
 		btnedit.setBounds(467, 547, 89, 23);
 		frame.getContentPane().add(btnedit);

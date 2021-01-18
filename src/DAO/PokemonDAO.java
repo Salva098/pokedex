@@ -3,6 +3,7 @@ package DAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import Models.Pokemon;
 
@@ -60,7 +61,6 @@ public class PokemonDAO extends BDDAO {
 	}
 
 	public boolean NewPokimon(Pokemon pokimon) {
-		String[] tipos;
 		try {
 			PreparedStatement poke = conn.prepareStatement(
 					"INSERT INTO pokemon (n_pokemon, Nombre, Altura, Categoria, Peso, Descripcion, Habilidad) VALUES (?,?,?,?,?,?,?)");
@@ -76,7 +76,40 @@ public class PokemonDAO extends BDDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+		return añadirTipos(pokimon);
+	}
+	public String[] arrTipos() {
+		ArrayList<String> tipos= new ArrayList<String>();
+		try {
+			ResultSet rsTodosTipos=stmt.executeQuery("select tipo from tipos");
+			while (rsTodosTipos.next()) {
+				tipos.add(rsTodosTipos.getString(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String [] finalTipos = new String[tipos.size()];
+		return tipos.toArray(finalTipos);
+		
+	}
+	public int[] arrTipoSelecionado(Pokemon Poke) {
+		ArrayList<Integer> tiposDelPokemon= new ArrayList<Integer>();
+		try {
+			ResultSet rsTodosTipos=stmt.executeQuery("select idtipos from pokemon_tipos where n_pokemon = "+Poke.getId_pokemon());
+				while (rsTodosTipos.next()) {
+					tiposDelPokemon.add(rsTodosTipos.getInt(1));
+				}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tiposDelPokemon.stream().mapToInt(i->i).toArray();
+		
+	}
+	public boolean añadirTipos(Pokemon pokimon) {
+		String[] tipos;
 		try {
 			tipos = pokimon.getTipo().split(", ");
 			for (int i = 0; i < tipos.length; i++) {
@@ -160,7 +193,23 @@ public class PokemonDAO extends BDDAO {
 	}
 
 	public void editPokemon(Pokemon Poke) {
-		
+		try {
+			PreparedStatement edit = conn.prepareStatement("UPDATE pokemon SET Nombre = ?, Altura = ?, Categoria = ?, Peso = ?, Descripcion = ?, Habilidad = ? WHERE (n_pokemon = ?)");
+			edit.setString(1, Poke.getNombre());
+			edit.setFloat(2, Poke.getAltura());
+			edit.setString(3, Poke.getCategoria());
+			edit.setFloat(4, Poke.getPeso());
+			edit.setString(5, Poke.getDescripcion());
+			edit.setString(6, Poke.getHabilidad());
+			edit.setInt(7, Poke.getId_pokemon());
+			edit.executeUpdate();
+			
+			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + Poke.getId_pokemon());
+			añadirTipos(Poke);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

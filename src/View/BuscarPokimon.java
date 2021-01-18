@@ -40,11 +40,12 @@ public class BuscarPokimon extends JPanel{
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	public int initialize() {
 		setComponents();
 		setButtons();
 		setLiseners();
 		setFrame();
+		return 0;
 		
 	}
 	
@@ -70,8 +71,8 @@ public class BuscarPokimon extends JPanel{
 			grupo1.add(rdbtnNewRadioButton_2);
 	}
 	
-	private void setLiseners() {
-		
+	private int setLiseners() {
+	return 1;	
 	}
 	
 	private void setFrame() {
@@ -83,7 +84,7 @@ public class BuscarPokimon extends JPanel{
 		textField.setColumns(10);
 		
 		JButton btnBuscar = new JButton("Buscar Pokemon");
-		btnBuscar.setBounds(381, 270, 125, 30);
+		btnBuscar.setBounds(315, 170, 125, 30);
 		add(btnBuscar);
 	}
 	

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -25,7 +27,7 @@ import Util.TextHelp;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-public class Pokedex {
+public class Pokedex implements KeyListener{
 
 	private JFrame frame;
 	private JLabel lblfondo;
@@ -89,10 +91,13 @@ public class Pokedex {
 		loadbuttons();
 		setListener();
 		loadFrame();
+		frame.addKeyListener(this);
+		frame.setFocusable(true);
+		frame.setFocusTraversalKeysEnabled(false);
 
 	}
 
-	private void loadPokemon(int id) {
+	public void loadPokemon(int id) {
 		String[] tipos;
 		pokimon = BBDD.getPokemonDAO(id);
 		String nombre = pokimon.getNombre(),nombrepokedex="";
@@ -188,24 +193,16 @@ public class Pokedex {
 	private void setListener() {
 		btnanterior.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (BBDD.haySiguiente(--id)) {
-					loadPokemon(id);
-				}else {
-					id=BBDD.cuantosPokemonHay();
-					loadPokemon(id);
-				}
-					
+				anterior();
+				frame.requestFocus();
+				
 			}
 		});
 
 		btnSiguiente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (BBDD.haySiguiente(++id)) {
-					loadPokemon(id);
-				}else {
-					id=1;
-					loadPokemon(id);
-				}
+				siguiente();
+				frame.requestFocus();
 			}
 		});
 		btnAtras.addActionListener(new ActionListener() {
@@ -227,6 +224,7 @@ public class Pokedex {
 				frame.dispose();
 			}
 		});
+		
 	}
 
 	private void loadbuttons() {
@@ -324,6 +322,7 @@ public class Pokedex {
 		frame.getContentPane().add(lblHabilidadPokemon);
 		
 		lblHabilidad = new JLabel();
+		lblHabilidad.setToolTipText("Hola");
 		lblHabilidad.setHorizontalAlignment(SwingConstants.CENTER);
 		lblHabilidad.setFont(new Font("Bahnschrift", Font.BOLD, 15));
 		lblHabilidad.setBounds(588, 353, 169, 25);
@@ -417,9 +416,10 @@ public class Pokedex {
 		frame.getContentPane().add(lblNumeroPokemon);
 
 		lblImgPokemon = new JLabel();
+		lblImgPokemon.setToolTipText("Pulsame para escucharme");
 		lblImgPokemon.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {
 				mediaPlayer = new MediaPlayer(new Media("https://play.pokemonshowdown.com/audio/cries/"+pokimon.getNombre().toLowerCase()+".mp3"));
 				mediaPlayer.play();
 			}
@@ -434,5 +434,42 @@ public class Pokedex {
 		lblDatosPokemon.setBounds(457, 173, 303, 26);
 		frame.getContentPane().add(lblDatosPokemon);
 
+	}
+	private void siguiente() {
+		if (BBDD.haySiguiente(++id)) {
+			loadPokemon(id);
+		}else {
+			id=1;
+			loadPokemon(id);
+		}
+	}
+	private void anterior() {
+		if (BBDD.haySiguiente(--id)) {
+			loadPokemon(id);
+		}else {
+			id=BBDD.cuantosPokemonHay();
+			loadPokemon(id);
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode()== KeyEvent.VK_RIGHT) {
+			siguiente();
+		}else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			anterior();
+		}
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -8,10 +8,17 @@ import javax.swing.JList;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.awt.event.ActionEvent;
+import javax.swing.JToggleButton;
 
 public class xd {
 
@@ -47,6 +54,7 @@ public class xd {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		com.sun.javafx.application.PlatformImpl.startup(()->{});
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -57,7 +65,6 @@ public class xd {
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.setBounds(210, 62, 100, 100);
 				int [] selecionao = {3,5,8};
-				list.setSelectedIndices(selecionao);
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(210, 67, 98, 110);
@@ -71,19 +78,15 @@ public class xd {
 		JButton btnNewButton = new JButton("New button");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int[] selectedIx = list.getSelectedIndices();
-				for (int i = 0; i < selectedIx.length; i++) {
-					System.out.println(selectedIx[i]);
-				}
-				String selected = "";
-				for (int i = 0; i < selectedIx.length; i++) {
-					selected += ", " + (String) list.getModel().getElementAt(selectedIx[i]);
-			    }
-				lblNewLabel.setText(selected);
+				MediaPlayer mediaPlayer = new MediaPlayer(new Media("https://play.pokemonshowdown.com/audio/notification.wav"));
+//		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+				mediaPlayer.setVolume(1);
+				mediaPlayer.play();
 			}
 		});
 		btnNewButton.setBounds(24, 37, 89, 23);
 		frame.getContentPane().add(btnNewButton);
+		
 		
 
 	}
