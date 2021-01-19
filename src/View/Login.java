@@ -196,7 +196,7 @@ public class Login extends JPanel{
 
 	private void login() {
 		if (BBDD.login(txtusuario.getText(), new String(passwordField.getPassword()))) {
-			new Pokedex(fparent.getX(),fparent.getY(),0);
+			new Pokedex(fparent.getX(),fparent.getY(),0,txtusuario.getText());
 			fparent.dispose();
 		} else {
 			int n1 = (int) (Math.random() * 151 + 1), n2 = (int) (Math.random() * 151 + 1);

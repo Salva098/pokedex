@@ -63,7 +63,7 @@ public class PokemonDAO extends BDDAO {
 	public boolean NewPokimon(Pokemon pokimon) {
 		try {
 			PreparedStatement poke = conn.prepareStatement(
-					"INSERT INTO pokemon (n_pokemon, Nombre, Altura, Categoria, Peso, Descripcion, Habilidad) VALUES (?,?,?,?,?,?,?)");
+					"INSERT INTO pokemon (n_pokemon, Nombre, Altura, Categoria, Peso, Descripcion, Habilidad, ImgPoke, IcoPoke, SonidoPoke) VALUES (?,?,?,?,?,?,?,?,?,?)");
 			poke.setInt(1, pokimon.getId_pokemon());
 			poke.setString(2, pokimon.getNombre());
 			poke.setFloat(3, pokimon.getAltura());
@@ -71,6 +71,10 @@ public class PokemonDAO extends BDDAO {
 			poke.setFloat(5, pokimon.getPeso());
 			poke.setString(6, pokimon.getDescripcion());
 			poke.setString(7, pokimon.getHabilidad());
+			poke.setString(8, pokimon.getImagen());
+			poke.setString(9, pokimon.getGif());
+			poke.setString(10, pokimon.getSonido());
+			
 			poke.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -169,7 +173,7 @@ public class PokemonDAO extends BDDAO {
 
 	public int cuantosPokemonHay() {
 		try {
-			ResultSet rs = stmt.executeQuery("select count(*) from pokemon ");
+			ResultSet rs = stmt.executeQuery("select max(n_pokemon) from pokemon ");
 			if (rs.next()) {
 
 				return rs.getInt(1);
@@ -181,10 +185,10 @@ public class PokemonDAO extends BDDAO {
 		}
 		return -1;
 	}
-	public void borrarPokemon(Pokemon Poke) {
+	public void borrarPokemon(int id) {
 		try {
-			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + Poke.getId_pokemon());
-			stmt.executeUpdate("DELETE FROM pokemon WHERE n_pokemon = " + Poke.getId_pokemon());
+			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + id);
+			stmt.executeUpdate("DELETE FROM pokemon WHERE n_pokemon = " + id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

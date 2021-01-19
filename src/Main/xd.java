@@ -5,6 +5,7 @@ import java.awt.ScrollPane;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -54,6 +55,8 @@ public class xd {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		String hola = JOptionPane.showInputDialog(frame, "Url de la imagen: ", "Imagen Personalizada", JOptionPane.QUESTION_MESSAGE);
+		System.out.println(hola);
 		com.sun.javafx.application.PlatformImpl.startup(()->{});
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

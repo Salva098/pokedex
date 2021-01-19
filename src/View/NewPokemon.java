@@ -26,7 +26,7 @@ import DAO.PokemonDAO;
 import Models.Pokemon;
 import Util.TextHelp;
 
-public class NewPokemon{
+public class NewPokemon {
 
 	private JFrame frame;
 	private JLabel lblfondo;
@@ -57,13 +57,15 @@ public class NewPokemon{
 	private PokemonDAO BBDD;
 	private JList<String> listaTipos;
 	private JScrollPane scrollPane;
-	
+	private String Usuario;
+
 	/**
 	 * Create the application.
 	 */
-	public NewPokemon(int x, int y, Pokemon poke) {
+	public NewPokemon(int x, int y, Pokemon poke, String Usuario) {
 		BBDD = new PokemonDAO();
-		text= new TextHelp();
+		text = new TextHelp();
+		this.Usuario=Usuario;
 		initialize();
 		if (poke == null) {
 			edit = false;
@@ -95,7 +97,7 @@ public class NewPokemon{
 		txtAltura.setText(String.valueOf(poke.getAltura()));
 		txtPeso.setText(String.valueOf(poke.getPeso()));
 		txtCategoria.setText(poke.getCategoria());
-		
+
 		txtHabilidad.setText(poke.getHabilidad());
 		listaTipos.setSelectedIndices(BBDD.arrTipoSelecionado(poke));
 		textAreaDescrp.setText(poke.getDescripcion());
@@ -115,74 +117,83 @@ public class NewPokemon{
 	}
 
 	private void newPokemonBD() {
-		int [] arrTipos =listaTipos.getSelectedIndices(); 
+		int[] arrTipos = listaTipos.getSelectedIndices();
+		String Sonido = "", gif = "", imagen = "";
 		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
-				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
-				&& !(arrTipos.length==0) && !textAreaDescrp.getText().isBlank()) {
-			if (!(arrTipos.length>2)) {
-				
-			int ntipos=0;
-			String tipos="";
-			for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
-				ntipos++;
-				if (ntipos == 1) {
-					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]);
-				} else {
-					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]) + ", " + tipos;
-				}
-			}
-			
-			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
-					Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
-					Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
-					text.quitarTildes(txtHabilidad.getText()),text.quitarTildes(tipos));
-			int eleccion = 0;
-			try {
-				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
-						JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
-						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/pikachu-hoenn.png")));
-			} catch (HeadlessException | MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if (eleccion == 0) {
-				if (BBDD.NewPokimon(pokimon)) {
+				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank() && !(arrTipos.length == 0)
+				&& !textAreaDescrp.getText().isBlank()) {
+			if (!(arrTipos.length > 2)) {
 
-					lblNumero.setText(String.valueOf(BBDD.cuantosPokemonHay() + 1));
-					txtNombre.setText("");
-					txtAltura.setText("");
-					txtCategoria.setText("");
-					txtPeso.setText("");
-					txtCategoria.setText("");
-					txtPeso.setText("");
-					textAreaDescrp.setText("");
-					txtHabilidad.setText("");
-					listaTipos.clearSelection();
-				} else {
-					try {
-						JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
-								"Los tipos no coincide", JOptionPane.ERROR_MESSAGE,
-								new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
-					} catch (HeadlessException | MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				int ntipos = 0;
+				String tipos = "";
+				for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
+					ntipos++;
+					if (ntipos == 1) {
+						tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]);
+					} else {
+						tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]) + ", " + tipos;
 					}
 				}
 
-			} else if (eleccion == 1) {
+				pkimg = new DecimalFormat("000");
+				imagen = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
+						+ pkimg.format(Integer.parseInt(lblNumero.getText())) + ".png";
+				gif = "https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif";
+				Sonido = "https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase() + ".mp3";
+
+				pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
+						Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
+						Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
+						text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(tipos), imagen, gif, Sonido);
+				int eleccion = 0;
 				try {
-					JOptionPane.showMessageDialog(frame, "El pokemon no se ha añadido", "No se ha añadido",
-							JOptionPane.INFORMATION_MESSAGE,
-							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/mimikyu-busted.png")));
+					eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
+							JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/pikachu-hoenn.png")));
 				} catch (HeadlessException | MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			}else {
-				
+				if (eleccion == 0) {
+					if (BBDD.NewPokimon(pokimon)) {
+
+						lblNumero.setText(String.valueOf(BBDD.cuantosPokemonHay() + 1));
+						txtNombre.setText("");
+						txtAltura.setText("");
+						txtCategoria.setText("");
+						txtPeso.setText("");
+						txtCategoria.setText("");
+						txtPeso.setText("");
+						textAreaDescrp.setText("");
+						txtHabilidad.setText("");
+						listaTipos.clearSelection();
+					} else {
+						try {
+							JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
+									"Los tipos no coincide", JOptionPane.ERROR_MESSAGE, new ImageIcon(
+											new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
+						} catch (HeadlessException | MalformedURLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+
+				} else if (eleccion == 1) {
+					try {
+						JOptionPane.showMessageDialog(frame, "El pokemon no se ha añadido", "No se ha añadido",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon(
+										new URL("https://play.pokemonshowdown.com/sprites/gen5/mimikyu-busted.png")));
+					} catch (HeadlessException | MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			} else {
+
 				try {
-					JOptionPane.showMessageDialog(frame, "Has seleccionado mas de un tipo","ERROR en el tipo", JOptionPane.ERROR_MESSAGE, new ImageIcon(new URL("https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif")) );
+					JOptionPane.showMessageDialog(frame, "Has seleccionado mas de un tipo", "ERROR en el tipo",
+							JOptionPane.ERROR_MESSAGE, new ImageIcon(
+									new URL("https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif")));
 				} catch (HeadlessException | MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -200,76 +211,82 @@ public class NewPokemon{
 	}
 
 	private void editPokemonBD() {
-		int [] arrTipos =listaTipos.getSelectedIndices(); 
+		String Sonido = "", gif = "", imagen = "";
+		int[] arrTipos = listaTipos.getSelectedIndices();
 		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
-				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank()
-				&& !(arrTipos.length==0) && !textAreaDescrp.getText().isBlank()) {
-			if (!(arrTipos.length>2)) {
-			int ntipos=0;
-			String tipos="";
-			for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
-				ntipos++;
-				if (ntipos == 1) {
-					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]);
-				} else {
-					tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]) + ", " + tipos;
-				}
-			}
-			String imagen=JOptionPane.showInputDialog(frame, message, title, messageType, icon, selectionValues, initialSelectionValue);
-			String gif;
-			String sonido;
-			
-			pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
-					Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
-					Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
-					text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(tipos));
-
-			int eleccion = 0;
-			try {
-				eleccion = JOptionPane.showConfirmDialog(frame, "Quieres editar este pokemon", "Editar pokemon",
-						JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
-						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/melmetal.png")));
-			} catch (HeadlessException | MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if (eleccion == 0) {
-
-				if (BBDD.existeTipo(pokimon)) {
-					BBDD.editPokemon(pokimon);
-					new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon());
-					frame.dispose();
-				} else {
-					try {
-						JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
-								"Los tipos no coincide", 0,
-								new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
-					} catch (HeadlessException | MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank() && !(arrTipos.length == 0)
+				&& !textAreaDescrp.getText().isBlank()) {
+			if (!(arrTipos.length > 2)) {
+				int ntipos = 0;
+				String tipos = "";
+				for (int i = 0; i < listaTipos.getSelectedIndices().length; i++) {
+					ntipos++;
+					if (ntipos == 1) {
+						tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]);
+					} else {
+						tipos = (String) listaTipos.getModel().getElementAt(arrTipos[i]) + ", " + tipos;
 					}
 				}
 
-			} else if (eleccion == 1) {
+				pkimg = new DecimalFormat("000");
+				imagen = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
+						+ pkimg.format(Integer.parseInt(lblNumero.getText())) + ".png";
+				gif = "https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif";
+				Sonido = "https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase() + ".mp3";
+				pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
+						Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
+						Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
+						text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(tipos), imagen, gif, Sonido);
+
+				int eleccion = 0;
 				try {
-					JOptionPane.showMessageDialog(frame, "El pokemon no se ha añadido", "No se ha añadido",
-							JOptionPane.INFORMATION_MESSAGE,
-							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/mimikyu-busted.png")));
+					eleccion = JOptionPane.showConfirmDialog(frame, "Quieres editar este pokemon", "Editar pokemon",
+							JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/melmetal.png")));
+				} catch (HeadlessException | MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (eleccion == 0) {
+
+					if (BBDD.existeTipo(pokimon)) {
+						BBDD.editPokemon(pokimon);
+						new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon(),Usuario);
+						frame.dispose();
+					} else {
+						try {
+							JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
+									"Los tipos no coincide", 0, new ImageIcon(
+											new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
+						} catch (HeadlessException | MalformedURLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+
+				} else if (eleccion == 1) {
+					try {
+						JOptionPane.showMessageDialog(frame, "El pokemon no se ha añadido", "No se ha añadido",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon(
+										new URL("https://play.pokemonshowdown.com/sprites/gen5/mimikyu-busted.png")));
+					} catch (HeadlessException | MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			} else {
+
+				try {
+					JOptionPane.showMessageDialog(frame, "Has seleccionado mas de un tipo", "ERROR en el tipo",
+							JOptionPane.ERROR_MESSAGE, new ImageIcon(
+									new URL("https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif")));
 				} catch (HeadlessException | MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-
-		}else {
-			
-			try {
-				JOptionPane.showMessageDialog(frame, "Has seleccionado mas de un tipo","ERROR en el tipo", JOptionPane.ERROR_MESSAGE, new ImageIcon(new URL("https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif")) );
-			} catch (HeadlessException | MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}}else {
+		} else {
 			try {
 				JOptionPane.showMessageDialog(frame, "No has rellenado los campos", "Has invocado un grimer", 0,
 						new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
@@ -278,8 +295,7 @@ public class NewPokemon{
 				e1.printStackTrace();
 			}
 		}
-		}
-
+	}
 
 	private void setLiseners() {
 		btnCrear.addActionListener(new ActionListener() {
@@ -290,10 +306,10 @@ public class NewPokemon{
 		btnatras.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!edit) {
-					new Pokedex(frame.getX(), frame.getY(),0);
+					new Pokedex(frame.getX(), frame.getY(), 0,Usuario);
 					frame.dispose();
-				}else {
-					new Pokedex(frame.getX(), frame.getY(),pokimon.getId_pokemon());
+				} else {
+					new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon(),Usuario);
 					frame.dispose();
 				}
 			}
@@ -312,9 +328,7 @@ public class NewPokemon{
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
-		
-		
+
 		lblfondo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblfondo.setBounds(0, 0, 796, 608);
 		frame.getContentPane().add(lblfondo);
@@ -338,7 +352,7 @@ public class NewPokemon{
 	}
 
 	private void loadcontent() {
-		
+
 		listaTipos = new JList<String>(BBDD.arrTipos());
 		listaTipos.setVisibleRowCount(4);
 		listaTipos.setBounds(604, 380, 96, 288);
@@ -347,7 +361,7 @@ public class NewPokemon{
 		scrollPane.setBounds(604, 380, 96, 57);
 		scrollPane.setViewportView(listaTipos);
 		frame.getContentPane().add(scrollPane);
-		
+
 		btnedit = new JButton("Editar");
 		btnedit.setBounds(467, 547, 89, 23);
 		frame.getContentPane().add(btnedit);

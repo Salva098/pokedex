@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -26,8 +25,12 @@ import Models.Pokemon;
 import Util.TextHelp;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 
-public class Pokedex implements KeyListener{
+public class Pokedex implements KeyListener {
 
 	private JFrame frame;
 	private JLabel lblfondo;
@@ -52,36 +55,39 @@ public class Pokedex implements KeyListener{
 	private JTextArea textAreaDescrp;
 	private JLabel lblHabilidadPokemon;
 	private JLabel lblHabilidad;
-	private JLabel lblpokeimg; 
+	private JLabel lblpokeimg;
 	private Pokemon pokimon;
 	private MediaPlayer mediaPlayer;
-	private DecimalFormat pkimg;
 	private JButton btnAtras;
-	private JButton btnAnadir;
 	private JLabel PokemonLogo;
-	private JLabel lblBuscarPoke;
 	private int id;
-	private JLabel lblEdit;
 	private TextHelp text;
 	private PokemonDAO BBDD;
-	
-	
-	private String sonido;
-	private String imagen;
-	private String gif;
+	private JMenuBar menuBar;
+	private JMenu mnInicio;
+	private JMenuItem mntmUsuario;
+	private JMenu mnPokemon;
+	private JMenuItem mntmnewPokemon;
+	private JMenuItem mntmEditPokemon;
+	private JMenuItem mntmBuscarPokemon;
+	private String usuario;
+	private JMenuItem mntmBorrarPokemon;
+	private JSeparator separator;
 
 	/**
 	 * Create the application.
 	 */
-	public Pokedex(int x, int y, int indice) {
-		BBDD= new PokemonDAO();
+	public Pokedex(int x, int y, int indice, String usuario) {
+		BBDD = new PokemonDAO();
 		text = new TextHelp();
-		if (indice==0) {
-			id=1;
-		}else {
-			id=indice;
+		this.usuario = usuario;
+		if (indice == 0) {
+			id = 1;
+		} else {
+			id = indice;
 		}
 		initialize();
+		mntmUsuario.setText("Usuario: " + usuario);
 		frame.setBounds(x, y, 812, 643);
 	}
 
@@ -90,7 +96,8 @@ public class Pokedex implements KeyListener{
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		com.sun.javafx.application.PlatformImpl.startup(()->{});
+		com.sun.javafx.application.PlatformImpl.startup(() -> {
+		});
 		loadcontent();
 		loadPokemon(id);
 		loadbuttons();
@@ -102,26 +109,27 @@ public class Pokedex implements KeyListener{
 
 	}
 
-	public void loadPokemon(int id) {
+	public boolean loadPokemon(int id) {
 		String[] tipos;
+		
 		pokimon = BBDD.getPokemonDAO(id);
-		String nombre = pokimon.getNombre(),nombrepokedex="";
-		pkimg =new DecimalFormat("000");
+
+		String nombre = pokimon.getNombre(), nombrepokedex = "";
 		if (nombre.equalsIgnoreCase("nidoranf")) {
-			nombrepokedex="Nidoran (F)";
-		}else if (nombre.equalsIgnoreCase("nidoranm")) {
-			nombrepokedex="Nidoran (M)";
-		}else if (nombre.equalsIgnoreCase("mrmime")) {
-			nombrepokedex="Mr. Mime";
-		}else if (nombre.equalsIgnoreCase("Farfetch'd")) {
-			nombrepokedex="Farfetch'd";
-		}else {
-			nombrepokedex=nombre;
+			nombrepokedex = "Nidoran (F)";
+		} else if (nombre.equalsIgnoreCase("nidoranm")) {
+			nombrepokedex = "Nidoran (M)";
+		} else if (nombre.equalsIgnoreCase("mrmime")) {
+			nombrepokedex = "Mr. Mime";
+		} else if (nombre.equalsIgnoreCase("Farfetch'd")) {
+			nombrepokedex = "Farfetch'd";
+		} else {
+			nombrepokedex = nombre;
 		}
-		sonido="https://play.pokemonshowdown.com/audio/cries/"+pokimon.getNombre().toLowerCase()+".mp3";
+		mediaPlayer = new MediaPlayer(new Media(pokimon.getSonido()));
 		lblNombre.setText(text.toMayus(nombrepokedex));
 		lblNumero.setText(String.valueOf(pokimon.getId_pokemon()));
-		
+
 		lblHabilidad.setText(text.toMayus(pokimon.getHabilidad()));
 		lblAltura.setText(String.valueOf(pokimon.getAltura()));
 		lblPeso.setText(String.valueOf(pokimon.getPeso()));
@@ -133,41 +141,39 @@ public class Pokedex implements KeyListener{
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		if (tipos.length==2) {
+		if (tipos.length == 2) {
 			try {
 				lblTipo_2.setIcon(new ImageIcon(new URL(BBDD.geticonoTipo(tipos[1]))));
 			} catch (MalformedURLException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-		}else {
+		} else {
 			try {
-				
-				lblTipo_2.setIcon(new ImageIcon(new URL("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9c64cfe3-bb3b-4ae8-b5a6-d2f39d21ff87/d3jme6i-8c702ad4-4b7a-4763-9901-99f8b4f038b0.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3sicGF0aCI6IlwvZlwvOWM2NGNmZTMtYmIzYi00YWU4LWI1YTYtZDJmMzlkMjFmZjg3XC9kM2ptZTZpLThjNzAyYWQ0LTRiN2EtNDc2My05OTAxLTk5ZjhiNGYwMzhiMC5wbmcifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6ZmlsZS5kb3dubG9hZCJdfQ.JAMbat4sBPIi4yMAvudrMIWf7vOdCgts3vn-JqFq1Oo")));
+
+				lblTipo_2.setIcon(new ImageIcon(new URL("https://bit.ly/2Kr76Pi")));
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		textAreaDescrp.setText(pokimon.getDescripcion());
-		
+
 		try {
-			gif="https://play.pokemonshowdown.com/sprites/ani/"+nombre.toLowerCase()+".gif";
-			lblpokeimg.setIcon(new ImageIcon(new URL(gif)));
+			lblpokeimg.setIcon(new ImageIcon(new URL(pokimon.getGif())));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		try {
-			imagen="https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"+pkimg.format(id)+".png";
-			lblImgPokemon.setIcon(new ImageIcon(new URL(imagen)));
+			lblImgPokemon.setIcon(new ImageIcon(new URL(pokimon.getImagen())));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		frame.setTitle("Pokedex - "+pokimon.getNombre());
-
+		frame.setTitle("Pokedex - " + pokimon.getNombre());
+		return true;
 	}
 
 	private void loadFrame() {
@@ -179,12 +185,13 @@ public class Pokedex implements KeyListener{
 		}
 
 		try {
-			frame.setIconImage(ImageIO.read(new URL("https://cdn0.iconfinder.com/data/icons/pokemon-go-vol-2/135/_pokemon_moltres-512.png")));
+			frame.setIconImage(ImageIO.read(
+					new URL("https://cdn0.iconfinder.com/data/icons/pokemon-go-vol-2/135/_pokemon_moltres-512.png")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		frame.setTitle("Pokedex - "+pokimon.getNombre());
+		frame.setTitle("Pokedex - " + pokimon.getNombre());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.getContentPane().setBackground(Color.WHITE);
@@ -199,11 +206,31 @@ public class Pokedex implements KeyListener{
 	}
 
 	private void setListener() {
+
+		mntmBorrarPokemon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BBDD.borrarPokemon(id);
+				siguiente();
+			}
+		});
+
+		mntmnewPokemon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new NewPokemon(frame.getX(), frame.getY(), null, usuario);
+				frame.dispose();
+			}
+		});
+		mntmEditPokemon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new NewPokemon(frame.getX(), frame.getY(), pokimon, usuario);
+				frame.dispose();
+			}
+		});
 		btnanterior.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				anterior();
 				frame.requestFocus();
-				
+
 			}
 		});
 
@@ -219,25 +246,13 @@ public class Pokedex implements KeyListener{
 				frame.dispose();
 			}
 		});
-		btnAnadir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new NewPokemon(frame.getX(), frame.getY(), null);
-				frame.dispose();
-			}
-		});
-		lblEdit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				new NewPokemon(frame.getX(), frame.getY(), pokimon);
-				frame.dispose();
-			}
-		});
-		
+
 	}
 
 	private void loadbuttons() {
 		try {
-			btnanterior = new JButton(new ImageIcon(new URL("https://assets.pokemon.com/static2/_ui/img/lightbox/prev.png")));
+			btnanterior = new JButton(
+					new ImageIcon(new URL("https://assets.pokemon.com/static2/_ui/img/lightbox/prev.png")));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -246,7 +261,8 @@ public class Pokedex implements KeyListener{
 		frame.getContentPane().add(btnanterior);
 
 		try {
-			btnSiguiente = new JButton(new ImageIcon(new URL("https://assets.pokemon.com/static2/_ui/img/lightbox/next.png")));
+			btnSiguiente = new JButton(
+					new ImageIcon(new URL("https://assets.pokemon.com/static2/_ui/img/lightbox/next.png")));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -257,52 +273,45 @@ public class Pokedex implements KeyListener{
 		btnAtras = new JButton("Atras");
 		btnAtras.setBounds(556, 544, 102, 36);
 		frame.getContentPane().add(btnAtras);
-
-		btnAnadir = new JButton("Anadir");
-		btnAnadir.setBounds(467, 127, 89, 23);
-		frame.getContentPane().add(btnAnadir);
 	}
 
 	private void loadcontent() {
-		
-		lblBuscarPoke = new JLabel("Haz click para buscar");
-		
-		
-		lblBuscarPoke.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-//				 String[] options1 = { "Pokemon ID", "Pokemon Nombre", "Pokemon Tipo" };
-//				 JPanel panel = new BuscarPokimon();
-//				 JOptionPane.showMessageDialog(frame, panel);
-//		           int result = JOptionPane.showmensageDialog(frame,panel , "Enter a Number",
-//		                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.DEFAULT_OPTION,
-//		                   null, options1, null);
-//				int buscarid =Integer.parseInt(JOptionPane.showInputDialog(frame,"Dime la id del pokemon",JOptionPane.QUESTION_MESSAGE));
-//					if (PokemonDAO.haySiguiente(buscarid)) {
-//						loadPokemon(buscarid);
-//						id =buscarid;
-//					}else {
-//					try {
-//						JOptionPane.showMessageDialog(null,"La id esa no existe", "Ese pokemon no se encuentra", JOptionPane.ERROR_MESSAGE, new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5ani/spinda.gif")));
-//					} catch (HeadlessException | IOException e1) {
-//						e1.printStackTrace();
-//					}
-//				}
-			}
-		});
-		
+
 		try {
-			PokemonLogo = new JLabel(new ImageIcon(new URL("https://assets.pokemon.com/assets/cms2-es-es/img/misc/gus/buttons/logo-pokemon-79x45.png")));
+			PokemonLogo = new JLabel(new ImageIcon(new URL(
+					"https://assets.pokemon.com/assets/cms2-es-es/img/misc/gus/buttons/logo-pokemon-79x45.png")));
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		}
-		
-		lblEdit = new JLabel("Haz click para editar el Pokemon");
-		lblEdit.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblEdit.setBounds(152, 138, 207, 19);
-		frame.getContentPane().add(lblEdit);
-		
+
+		menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 806, 19);
+		frame.getContentPane().add(menuBar);
+
+		mnInicio = new JMenu("Inicio");
+		menuBar.add(mnInicio);
+
+		mntmUsuario = new JMenuItem("usuario");
+		mnInicio.add(mntmUsuario);
+
+		mnPokemon = new JMenu("Pokemon");
+		menuBar.add(mnPokemon);
+
+		mntmnewPokemon = new JMenuItem("Nuevo Pokemon");
+		mnPokemon.add(mntmnewPokemon);
+
+		mntmEditPokemon = new JMenuItem("Editar Pokemon");
+		mnPokemon.add(mntmEditPokemon);
+
+		mntmBorrarPokemon = new JMenuItem("Borrar Pokemon");
+		mnPokemon.add(mntmBorrarPokemon);
+
+		separator = new JSeparator();
+		mnPokemon.add(separator);
+
+		mntmBuscarPokemon = new JMenuItem("Buscar Pokemon");
+		mnPokemon.add(mntmBuscarPokemon);
+
 		lblTipo_2 = new JLabel();
 		lblTipo_2.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTipo_2.setFont(new Font("Bahnschrift", Font.BOLD, 15));
@@ -311,31 +320,24 @@ public class Pokedex implements KeyListener{
 		PokemonLogo.setHorizontalAlignment(SwingConstants.CENTER);
 		PokemonLogo.setBounds(707, 11, 89, 36);
 		frame.getContentPane().add(PokemonLogo);
-		
-		
-		lblBuscarPoke.setFont(new Font("Bahnschrift", Font.PLAIN, 15));
-		lblBuscarPoke.setHorizontalAlignment(SwingConstants.CENTER);
-		lblBuscarPoke.setBounds(108, 494, 153, 48);
-		frame.getContentPane().add(lblBuscarPoke);
-		
+
 		lblpokeimg = new JLabel();
 		lblpokeimg.setHorizontalAlignment(SwingConstants.CENTER);
 		lblpokeimg.setBounds(199, 352, 160, 141);
 		frame.getContentPane().add(lblpokeimg);
-		
+
 		lblHabilidadPokemon = new JLabel("Habilidad: ");
 		lblHabilidadPokemon.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblHabilidadPokemon.setFont(new Font("Bahnschrift", Font.BOLD, 15));
 		lblHabilidadPokemon.setBounds(457, 352, 121, 26);
 		frame.getContentPane().add(lblHabilidadPokemon);
-		
+
 		lblHabilidad = new JLabel();
 		lblHabilidad.setToolTipText("Hola");
 		lblHabilidad.setHorizontalAlignment(SwingConstants.CENTER);
 		lblHabilidad.setFont(new Font("Bahnschrift", Font.BOLD, 15));
 		lblHabilidad.setBounds(588, 353, 169, 25);
 		frame.getContentPane().add(lblHabilidad);
-		
 
 		textAreaDescrp = new JTextArea();
 		textAreaDescrp.setWrapStyleWord(true);
@@ -428,8 +430,7 @@ public class Pokedex implements KeyListener{
 		lblImgPokemon.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				mediaPlayer = new MediaPlayer(new Media("https://play.pokemonshowdown.com/audio/cries/"+pokimon.getNombre().toLowerCase()+".mp3"));
+
 				mediaPlayer.play();
 			}
 		});
@@ -444,22 +445,42 @@ public class Pokedex implements KeyListener{
 		frame.getContentPane().add(lblDatosPokemon);
 
 	}
+
 	private void siguiente() {
-		if (BBDD.haySiguiente(++id)) {
+		boolean siguiente=true;
+		while (siguiente) {
+		if (!(id==BBDD.cuantosPokemonHay())) {
+		if (BBDD.haySiguiente(id++)) {
+				
 			loadPokemon(id);
+			siguiente=false;
+		}else {
+			siguiente=true;
+		}
 		}else {
 			id=1;
 			loadPokemon(id);
-			
+			siguiente=false;
 		}
-s	}
+		}
+		System.out.println(id);
+		
+	}
+
 	private void anterior() {
+
 		if (BBDD.haySiguiente(--id)) {
+			if (!loadPokemon(id)) {
+				while (!loadPokemon(id)) {
+					--id;
+				}
+			}
+		} else {
+			id = BBDD.cuantosPokemonHay();
 			loadPokemon(id);
-		}else {
-			id=BBDD.cuantosPokemonHay();
-			loadPokemon(id);
+
 		}
+
 	}
 
 	@Override
@@ -469,17 +490,17 @@ s	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode()== KeyEvent.VK_RIGHT) {
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			siguiente();
-		}else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			anterior();
 		}
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
