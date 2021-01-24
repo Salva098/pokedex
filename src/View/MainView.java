@@ -12,14 +12,14 @@ public class MainView extends JFrame {
 	
 
 	/**
-	 * Create the application.
+	 * Esto es un frame en el cual se muestra solo 2 paneles el panel del login y el panel del register
 	 */
 	public MainView() {
 		initialize();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Inicia los componentes del frame.
 	 */
 	private void initialize() {
 		setContentPane(new Login(this));

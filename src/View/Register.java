@@ -46,7 +46,7 @@ public class Register extends JPanel{
 	private UsuarioDAO BBDD;
 
 	/**
-	 * Create the application.
+	 * constructor
 	 */
 	public Register(JPanel parent) {
 		BBDD=new UsuarioDAO();
@@ -79,6 +79,9 @@ public class Register extends JPanel{
 		
 	}
 
+	/**
+	 * inicio de los liseners
+	 */
 	private void setListener() {
 		btnRegistro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -123,7 +126,11 @@ public class Register extends JPanel{
 			}
 		});
 	}
-
+	
+	
+	/**
+	 * metoro para registrar un usuario nuevo
+	 */
 	private void signIn() {
 		if (!BBDD.comprobarUsuarios(txtusuario.getText())) {
 			fparent.setContentPane(parent);
@@ -154,6 +161,10 @@ public class Register extends JPanel{
 		}
 	}
 
+	
+	/**
+	 * Carga los botones
+	 */
 	private void loadbuttons() {
 
 		btnCancelar = new JButton("Cancelar");
@@ -165,6 +176,11 @@ public class Register extends JPanel{
 		add(btnRegistro);
 
 	}
+	
+	/**
+	 * Carga el contenido
+	 * @throws MalformedURLException
+	 */
 
 	private void loadcontent() throws MalformedURLException {
 
@@ -213,6 +229,11 @@ public class Register extends JPanel{
 		add(passwordField);
 
 	}
+	
+	
+	/**
+	 * Carga el panel
+	 */
 	public void setPanel() {
 		try {
 			lblfondo = new JLabel(new ImageIcon(
@@ -227,7 +248,9 @@ public class Register extends JPanel{
 		setCursor();
 		setLayout(null);
 	}
-
+	/*
+	 * Carga el cursor
+	 */
 	public void setCursor() {
 
 		try {

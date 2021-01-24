@@ -45,7 +45,7 @@ public class Login extends JPanel{
 	private UsuarioDAO BBDD;
 
 	/**
-	 * Create the application.
+	 * Constructor
 	 */
 	public Login(JFrame fparent) {
 		BBDD=new UsuarioDAO();
@@ -60,7 +60,7 @@ public class Login extends JPanel{
 		}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * inicio de los elementos
 	 * 
 	 * @throws MalformedURLException
 	 */
@@ -71,15 +71,11 @@ public class Login extends JPanel{
 		setPanel();
 
 	}
-
-
-//	private void loadFrame() throws MalformedURLException {
-
-		// foto del fondo la cargo cuando el panel
-//		frame.setTitle("Pokedex - Login");
-
-//	}
-
+	
+	/**
+	 * Carga los componentes del panel
+	 * @throws MalformedURLException
+	 */
 	private void loadcontent() throws MalformedURLException {
 
 		lblLogin = new JLabel("Login Entrenador");
@@ -116,6 +112,9 @@ public class Login extends JPanel{
 
 	}
 
+	/**
+	 * carga los botones
+	 */
 	private void loadbuttons() {
 		btnEntrar = new JButton("Entrar");
 		btnEntrar.setBounds(237, 259, 89, 23);
@@ -126,6 +125,9 @@ public class Login extends JPanel{
 		add(btnNuevo);
 	}
 
+	/**
+	 * Carga las acciones de los botones
+	 */
 	private void setListener() {
 		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -133,7 +135,7 @@ public class Login extends JPanel{
 					login();
 				} else {
 					try {
-						JOptionPane.showMessageDialog(null, "No estas rellenando los campos,\ntoma un ditto",
+						JOptionPane.showMessageDialog(fparent, "No estas rellenando los campos,\ntoma un ditto",
 								"El programa esta confuso", JOptionPane.INFORMATION_MESSAGE,
 								new ImageIcon(ImageIO.read(new URL("https://images.alexonsager.net/pokemon/132.png"))));
 					} catch (HeadlessException | IOException e1) {
@@ -144,7 +146,8 @@ public class Login extends JPanel{
 				}
 			}
 		});
-
+		
+		// cuando le pulsa enter hace un loging
 		passwordField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -159,12 +162,17 @@ public class Login extends JPanel{
 
 		btnNuevo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				new Register(thisPanel);
 				txtusuario.setText("");
 				passwordField.setText("");
 			}
 		});
 	}
+	
+	/**
+	 * Carga el panel
+	 */
 	public void setPanel() {
 		try {
 			lblfondo = new JLabel(new ImageIcon(
@@ -180,6 +188,9 @@ public class Login extends JPanel{
 		setLayout(null);
 	}
 
+	/**
+	 * Carga el cursor
+	 */
 	public void setCursor() {
 
 		try {
@@ -194,14 +205,17 @@ public class Login extends JPanel{
 		setCursor(cursor);
 	}
 
+	/**
+	 * metodo que compara si existe ese usuario y ha puesto bien la contraseña, y lo loguea
+	 */
 	private void login() {
 		if (BBDD.login(txtusuario.getText(), new String(passwordField.getPassword()))) {
-			new Pokedex(fparent.getX(),fparent.getY(),0,txtusuario.getText());
+			new Pokedex(fparent.getX(),fparent.getY(),txtusuario.getText());
 			fparent.dispose();
 		} else {
 			int n1 = (int) (Math.random() * 151 + 1), n2 = (int) (Math.random() * 151 + 1);
 			try {
-				JOptionPane.showMessageDialog(null, "Oh no, tu accion ha deformado este pokemon",
+				JOptionPane.showMessageDialog(fparent, "Oh no, tu accion ha deformado este pokemon",
 						"Entrenador no existente", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(ImageIO.read(new URL(
 								"https://images.alexonsager.net/pokemon/fused/" + n1 + "/" + n1 + "." + n2 + ".png"))));
 			} catch (HeadlessException | IOException e) {

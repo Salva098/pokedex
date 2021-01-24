@@ -3,18 +3,24 @@ package DAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import Models.Pokemon;
 
 public class PokemonDAO extends BDDAO {
 
+	/**
+	 * Devuelve un objeto pokemon mediante la id
+	 * @param idpokemon numero del pokemon que se va a devolver
+	 * @return un Pokemon
+	 */
 	public Pokemon getPokemonDAO(int idpokemon) {
 		Pokemon pk = null;
 		String tipos = "";
 		boolean next = false;
 		try {
-			ResultSet pokemon = stmt.executeQuery("select * from pokemon where n_pokemon = " + idpokemon);
+			ResultSet pokemon = stmt.executeQuery("select * from pokemon where n_pokemon = "+idpokemon);
 			next = pokemon.next();
 			if (next) {
 
@@ -47,11 +53,15 @@ public class PokemonDAO extends BDDAO {
 		return pk;
 	}
 
-	public boolean haySiguiente(int idpokemon) {
+	/**
+	 * Comprueba si existe un pokemon con esa id
+	 * @param idpokemon pokemon que se va a comprobar
+	 * @return true si existe
+	 */
+	public boolean hayPokemon(int idpokemon) {
 		try {
 			ResultSet rs = stmt.executeQuery("select * from pokemon where n_pokemon = " + idpokemon);
-
-			return rs.next();
+				return rs.next();
 
 		} catch (SQLException ex) {
 			System.out.println(ex.getMessage());
@@ -59,8 +69,27 @@ public class PokemonDAO extends BDDAO {
 		return false;
 
 	}
+	
+	/**
+	 * Devuelve las id de los pokemons que no existen
+	 * @return Arraylist de las id de los pokemon que no existen
+	 */
+	public ArrayList<Integer> pokemonNoExisten(){
+		ArrayList<Integer> idPokemon=new ArrayList<Integer>();
+		for (int i = 1; i < ultimoPokemon(); i++) {
+			if (!hayPokemon(i)) {
+				idPokemon.add(i);
+			}
+		}
+		idPokemon.add(ultimoPokemon()+1);
+		return idPokemon;
+	}
 
-	public boolean NewPokimon(Pokemon pokimon) {
+	/**
+	 * Inserta un pokemon a la base de datos
+	 * @param pokimon pokemon que se va a insertar
+	 */
+	public void NewPokimon(Pokemon pokimon) {
 		try {
 			PreparedStatement poke = conn.prepareStatement(
 					"INSERT INTO pokemon (n_pokemon, Nombre, Altura, Categoria, Peso, Descripcion, Habilidad, ImgPoke, IcoPoke, SonidoPoke) VALUES (?,?,?,?,?,?,?,?,?,?)");
@@ -81,8 +110,13 @@ public class PokemonDAO extends BDDAO {
 			e.printStackTrace();
 		}
 		
-		return añadirTipos(pokimon);
+		anadirTipos(pokimon);
 	}
+	
+	/**
+	 * Array con los nombres de los tipos
+	 * @return Array de Stirng con los tipos
+	 */
 	public String[] arrTipos() {
 		ArrayList<String> tipos= new ArrayList<String>();
 		try {
@@ -98,6 +132,12 @@ public class PokemonDAO extends BDDAO {
 		return tipos.toArray(finalTipos);
 		
 	}
+	
+	/**
+	 * Devuelve un array con los indices de los tipos que tiene un pokemon
+	 * @param Poke pokemon que se va a buscar los tipos
+	 * @return array de indices de los tipos de un pokemon
+	 */
 	public int[] arrTipoSelecionado(Pokemon Poke) {
 		ArrayList<Integer> tiposDelPokemon= new ArrayList<Integer>();
 		try {
@@ -112,7 +152,12 @@ public class PokemonDAO extends BDDAO {
 		return tiposDelPokemon.stream().mapToInt(i->i).toArray();
 		
 	}
-	public boolean añadirTipos(Pokemon pokimon) {
+	
+	/**
+	 * Anyade los tipos a un pokemon 
+	 * @param pokimon pokemon que se le va a anyadir los tipos
+	 */
+	public void anadirTipos(Pokemon pokimon) {
 		String[] tipos;
 		try {
 			tipos = pokimon.getTipo().split(", ");
@@ -120,9 +165,7 @@ public class PokemonDAO extends BDDAO {
 				ResultSet n_tipo = stmt.executeQuery("SELECT idTipos FROM tipos WHERE  Tipo like '" + tipos[i] + "'");
 				if (n_tipo.next()) {
 					tipos[i] = n_tipo.getString(1);
-				} else {
-					return false;
-				}
+					}
 			}
 			
 			for (int i = 0; i < tipos.length; i++) {
@@ -136,9 +179,13 @@ public class PokemonDAO extends BDDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return true;
 	}
 
+	/**
+	 * Comprueba si existe los tipos de los pokemons
+	 * @param poke pokemon para comparar si existe esos tipos
+	 * @return true si existe esos tipos
+	 */
 	public boolean existeTipo(Pokemon poke) {
 		String tipos[] = poke.getTipo().split(", ");
 		try {
@@ -157,6 +204,11 @@ public class PokemonDAO extends BDDAO {
 		return true;
 	}
 
+	/**
+	 * Devuelve la imagen del tipo
+	 * @param tipo nombre del tipo que se quiere la imagen
+	 * @return la url de la imagen
+	 */
 	public String geticonoTipo(String tipo) {
 		try {
 			ResultSet rs = stmt.executeQuery("select tipoico from tipos where tipo like '" + tipo + "'");
@@ -170,8 +222,31 @@ public class PokemonDAO extends BDDAO {
 		return null;
 
 	}
+	
+	/**
+	 * Obtiene el primer id de la base de dato
+	 * @return el primer valor de la base de datos
+	 */
+	public int primerPokemon() {
+		try {
+			ResultSet rs = stmt.executeQuery("select min(n_pokemon) from pokemon ");
+			if (rs.next()) {
 
-	public int cuantosPokemonHay() {
+				return rs.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	/**
+	 * Devuelve el ultimo valor de la base de datos
+	 * @return el ultimo valor de la base de datos
+	 */
+	public int ultimoPokemon() {
 		try {
 			ResultSet rs = stmt.executeQuery("select max(n_pokemon) from pokemon ");
 			if (rs.next()) {
@@ -185,6 +260,11 @@ public class PokemonDAO extends BDDAO {
 		}
 		return -1;
 	}
+	
+	/**
+	 * Borra el pokemon con la id  
+	 * @param id del pokemon
+	 */
 	public void borrarPokemon(int id) {
 		try {
 			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + id);
@@ -196,6 +276,10 @@ public class PokemonDAO extends BDDAO {
 		
 	}
 
+	/**
+	 * Edita el pokemon en la base de datos
+	 * @param Poke pokemon que se va a cambiar los valores en la base de datos
+	 */
 	public void editPokemon(Pokemon Poke) {
 		try {
 			PreparedStatement edit = conn.prepareStatement("UPDATE pokemon SET Nombre = ?, Altura = ?, Categoria = ?, Peso = ?, Descripcion = ?, Habilidad = ? WHERE (n_pokemon = ?)");
@@ -209,24 +293,62 @@ public class PokemonDAO extends BDDAO {
 			edit.executeUpdate();
 			
 			stmt.executeUpdate("DELETE FROM pokemon_tipos WHERE n_pokemon = " + Poke.getId_pokemon());
-			añadirTipos(Poke);
+			anadirTipos(Poke);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void insertarPokemonimagenysonido(String imagen, String gif, String sonido, int idpokemon) {
+	
+	/**
+	 * Devuelve en un Arraylist con los pokemons en la busqueda por nombre
+	 * @param Pokemon texto que se va a buscar en la base de datos
+	 * @return Arraylist con los pokemon 
+	 */
+	public ArrayList<Pokemon> buscarPorNombre(String Pokemon) {
+		ArrayList<Pokemon> Resultado=new ArrayList<Pokemon>();
+		
 		try {
-			PreparedStatement edit = conn.prepareStatement("UPDATE pokemon SET ImgPoke = ?, IcoPoke = ?, SonidoPoke = ? WHERE (n_pokemon = ?)");
-			edit.setString(1,imagen);
-			edit.setString(2,gif);
-			edit.setString(3,sonido);
-			edit.setInt(4, idpokemon);
-			edit.executeUpdate();
+			Statement stmt1=conn.createStatement();
+			ResultSet res = stmt1.executeQuery("select n_pokemon from pokemon where nombre like '%"+Pokemon+"%' order by n_pokemon");
+			while (res.next()) {
+				Resultado.add(getPokemonDAO(res.getInt(1)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
+		return Resultado;
+		
+	}
+	
+	/**
+	 * Devuelve en un Arraylist con los pokemons en la busqueda por tipos
+	 * @param Tipos texto que se va a buscar en la base de datos
+	 * @return Arraylist con los pokemon
+	 */
+	public ArrayList<Pokemon> buscarPorTipo(ArrayList<String>Tipos) {
+		ArrayList<Pokemon> Resultado=new ArrayList<Pokemon>();
+		String tipos="";
+		for (int i = 0; i < Tipos.size() ; i++) {
+			if (i == 0) {
+				tipos = "'"+Tipos.get(i)+"'";
+			} else {
+				tipos = "'"+Tipos.get(i)+"'" + ", " + tipos;
+			}
+		}
+		try {
+			Statement stmt1=conn.createStatement();
+			ResultSet res = stmt1.executeQuery("select n_pokemon from pokemon_tipos,tipos where pokemon_tipos.idTipos=tipos.idTipos and Tipo in ("+tipos+") order by n_pokemon");
+			while (res.next()) {
+				Resultado.add(getPokemonDAO(res.getInt(1)));
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return Resultado;
+		
 	}
 
 }

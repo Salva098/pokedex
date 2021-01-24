@@ -7,6 +7,13 @@ import java.sql.Statement;
 
 public class UsuarioDAO extends BDDAO {
 
+	
+	/**
+	 * Metodo para comprobar el usuario y contrasena
+	 * @param usuario que se va a comprobar
+	 * @param contrasena del usuario que se va a comprobar
+	 * @return true si existe el usuario
+	 */
 	public boolean login(String usuario, String contrasena) {
 
 		try  {
@@ -22,6 +29,11 @@ public class UsuarioDAO extends BDDAO {
 		return false;
 	}
 
+	/**
+	 * Metodo para comrpobar si existe el usuario para no duplicar
+	 * @param usuario para comprobar si existe
+	 * @return true si existe
+	 */
 	public boolean comprobarUsuarios(String usuario) {
 		
 		try {
@@ -37,6 +49,11 @@ public class UsuarioDAO extends BDDAO {
 		return false;
 	}
 
+	/**
+	 * Registra un usuario en la base de datos 
+	 * @param usuario que va a anadir
+	 * @param contrasena del usuario que se va a registrar
+	 */
 	public void register(String usuario, String contrasena) {
 
 		try {
@@ -45,7 +62,6 @@ public class UsuarioDAO extends BDDAO {
 			stmt.setString(2, contrasena);
 			stmt.executeUpdate();
 
-			// loop through the result set
 
 		} catch (SQLException ex) {
 			System.out.println(ex.getMessage());

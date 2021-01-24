@@ -9,8 +9,12 @@ public abstract class BDDAO {
 
 	protected Connection conn = Connection();
 	protected Statement stmt = Statement();
-	
-	
+
+	/**
+	 * crea una conexion a la base de datos
+	 * 
+	 * @return
+	 */
 	private Connection Connection() {
 		Connection conn = null;
 		try {
@@ -22,8 +26,14 @@ public abstract class BDDAO {
 			e.printStackTrace();
 		}
 		return conn;
-		
+
 	}
+
+	/**
+	 * crea una declaracion a la base de datos
+	 * 
+	 * @return
+	 */
 	private Statement Statement() {
 		Statement stmt = null;
 		try {

@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,6 +15,7 @@ import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -52,36 +55,61 @@ public class NewPokemon {
 	private JTextField txtHabilidad;
 	private JButton btnedit;
 	private DecimalFormat pkimg;
-	private boolean edit;
 	private TextHelp text;
 	private PokemonDAO BBDD;
 	private JList<String> listaTipos;
 	private JScrollPane scrollPane;
 	private String Usuario;
+	private JComboBox<Integer> comboBox;
+	private boolean edit;
 
 	/**
-	 * Create the application.
+	 * Constructor para editar un pokemon
+	 * @param x coordenadas de la posicion en el eje X
+	 * @param y coordenadas de la posicion en el eje Y
+	 * @param poke pokemon que se va a editar
+	 * @param Usuario nombre del usuario
 	 */
 	public NewPokemon(int x, int y, Pokemon poke, String Usuario) {
 		BBDD = new PokemonDAO();
 		text = new TextHelp();
-		this.Usuario=Usuario;
+		this.Usuario = Usuario;
+		edit = true;
 		initialize();
-		if (poke == null) {
-			edit = false;
-		} else {
-			edit = true;
-			pokimon = poke;
-			loadPokemon(poke);
-		}
+		pokimon = poke;
+		loadPokemon(poke);
 		frame.setBounds(x, y, 812, 643);
-		btnedit.setVisible(edit);
-		btnCrear.setVisible(!edit);
+		frame.setResizable(false);
+		btnedit.setVisible(true);
+		lblNumero.setVisible(true);
+		btnCrear.setVisible(false);
+		comboBox.setVisible(false);
 
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Constructor para anyadir un pokemon
+	 * @param x coordenadas de la posicion en el eje X
+	 * @param y coordenadas de la posicion en el eje Y
+	 * @param Usuario nombre del usuario
+	 */
+
+	public NewPokemon(int x, int y, String Usuario) {
+		BBDD = new PokemonDAO();
+		text = new TextHelp();
+		this.Usuario = Usuario;
+		edit = false;
+		initialize();
+		frame.setBounds(x, y, 812, 643);
+		btnedit.setVisible(false);
+		lblNumero.setVisible(false);
+		btnCrear.setVisible(true);
+		comboBox.setVisible(true);
+
+	}
+
+	/**
+	 * Inicializa los componentes en el frame
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -91,6 +119,10 @@ public class NewPokemon {
 
 	}
 
+	/**
+	 * carga un pokemon en los campos para editar
+	 * @param poke pokemon que se va a editar
+	 */
 	private void loadPokemon(Pokemon poke) {
 		lblNumero.setText(String.valueOf(poke.getId_pokemon()));
 		txtNombre.setText(poke.getNombre());
@@ -116,9 +148,13 @@ public class NewPokemon {
 
 	}
 
+	/**
+	 * accion del boton nuevo pokemon
+	 */
 	private void newPokemonBD() {
 		int[] arrTipos = listaTipos.getSelectedIndices();
 		String Sonido = "", gif = "", imagen = "";
+		int eleccion = 0;
 		if (!txtNombre.getText().isBlank() && !txtAltura.getText().isBlank() && !txtPeso.getText().isBlank()
 				&& !txtCategoria.getText().isBlank() && !txtHabilidad.getText().isBlank() && !(arrTipos.length == 0)
 				&& !textAreaDescrp.getText().isBlank()) {
@@ -136,28 +172,62 @@ public class NewPokemon {
 				}
 
 				pkimg = new DecimalFormat("000");
-				imagen = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
-						+ pkimg.format(Integer.parseInt(lblNumero.getText())) + ".png";
-				gif = "https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif";
-				Sonido = "https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase() + ".mp3";
+				if (text.validadorUrl("https://play.pokemonshowdown.com/sprites/gen5/"
+						+ txtNombre.getText().toLowerCase() + ".png")
+						&& text.validadorUrl("https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
+								+ pkimg.format(comboBox.getSelectedItem()) + ".png")) {
+					imagen = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
+							+ pkimg.format(comboBox.getSelectedItem()) + ".png";
+				} else {
+					imagen = "https://i.imgur.com/jHA61su.gif";
+				}
+				
+				if (text.validadorUrl(
+						"https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif")) {
 
-				pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
+					gif = "https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif";
+
+
+				} else {
+					gif = "https://i.imgur.com/4wGvsX7.gif";
+				}
+
+				if (text.validadorUrl(
+						"https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase() + ".mp3")) {
+
+					Sonido = "https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase()
+							+ ".mp3";
+
+				} else {
+					Sonido = "https://play.pokemonshowdown.com/audio/notification.wav";
+				}
+
+				pokimon = new Pokemon((Integer) comboBox.getSelectedItem(), text.quitarTildes(txtNombre.getText()),
 						Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
 						Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
 						text.quitarTildes(txtHabilidad.getText()), text.quitarTildes(tipos), imagen, gif, Sonido);
-				int eleccion = 0;
 				try {
 					eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir este pokemon", "Nuevo pokemon",
 							JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
-							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/pikachu-hoenn.png")));
+							new ImageIcon(new URL("https://play.pokemonshowdown.com/sprites/gen5/unown-qm.png")));
 				} catch (HeadlessException | MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if (eleccion == 0) {
-					if (BBDD.NewPokimon(pokimon)) {
-
-						lblNumero.setText(String.valueOf(BBDD.cuantosPokemonHay() + 1));
+					BBDD.NewPokimon(pokimon);
+					try {
+						eleccion = JOptionPane.showConfirmDialog(frame, "Quieres Añadir otro Pokemon?",
+								"Añadir otro Pokemon", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+								new ImageIcon(
+										new URL("https://play.pokemonshowdown.com/sprites/gen5/pikachu-hoenn.png")));
+					} catch (HeadlessException | MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (eleccion == 0) {
+						rellenarCombobox();
+						comboBox.setSelectedItem(1);
 						txtNombre.setText("");
 						txtAltura.setText("");
 						txtCategoria.setText("");
@@ -167,15 +237,9 @@ public class NewPokemon {
 						textAreaDescrp.setText("");
 						txtHabilidad.setText("");
 						listaTipos.clearSelection();
-					} else {
-						try {
-							JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
-									"Los tipos no coincide", JOptionPane.ERROR_MESSAGE, new ImageIcon(
-											new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
-						} catch (HeadlessException | MalformedURLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+					} else if (eleccion == 1) {
+						new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon(), Usuario);
+						frame.dispose();
 					}
 
 				} else if (eleccion == 1) {
@@ -189,10 +253,9 @@ public class NewPokemon {
 					}
 				}
 			} else {
-
 				try {
-					JOptionPane.showMessageDialog(frame, "Has seleccionado mas de un tipo", "ERROR en el tipo",
-							JOptionPane.ERROR_MESSAGE, new ImageIcon(
+					JOptionPane.showMessageDialog(frame, "Has seleccionado mas de dos tipos",
+							"ERROR en el tipo del pokemon", JOptionPane.ERROR_MESSAGE, new ImageIcon(
 									new URL("https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif")));
 				} catch (HeadlessException | MalformedURLException e) {
 					// TODO Auto-generated catch block
@@ -210,6 +273,10 @@ public class NewPokemon {
 		}
 	}
 
+	
+	/**
+	 * accion del boton editar pokemon
+	 */
 	private void editPokemonBD() {
 		String Sonido = "", gif = "", imagen = "";
 		int[] arrTipos = listaTipos.getSelectedIndices();
@@ -229,10 +296,35 @@ public class NewPokemon {
 				}
 
 				pkimg = new DecimalFormat("000");
-				imagen = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
-						+ pkimg.format(Integer.parseInt(lblNumero.getText())) + ".png";
-				gif = "https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif";
-				Sonido = "https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase() + ".mp3";
+				if (text.validadorUrl(
+						"https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif")) {
+
+					gif = "https://play.pokemonshowdown.com/sprites/ani/" + txtNombre.getText().toLowerCase() + ".gif";
+
+					if (text.validadorUrl("https://play.pokemonshowdown.com/sprites/gen5/"
+							+ txtNombre.getText().toLowerCase() + ".png")
+							|| text.validadorUrl("https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
+									+ pkimg.format(comboBox.getSelectedItem()) + ".png")) {
+						imagen = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/"
+								+ pkimg.format(comboBox.getSelectedItem()) + ".png";
+					} else {
+						imagen = "https://i.imgur.com/jHA61su.gif";
+					}
+
+				} else {
+					gif = "https://i.imgur.com/4wGvsX7.gif";
+				}
+
+				if (text.validadorUrl(
+						"https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase() + ".mp3")) {
+
+					Sonido = "https://play.pokemonshowdown.com/audio/cries/" + txtNombre.getText().toLowerCase()
+							+ ".mp3";
+
+				} else {
+					Sonido = "https://play.pokemonshowdown.com/audio/notification.wav";
+				}
+
 				pokimon = new Pokemon(Integer.parseInt(lblNumero.getText()), text.quitarTildes(txtNombre.getText()),
 						Float.valueOf(txtAltura.getText()), text.quitarTildes(txtCategoria.getText()),
 						Float.valueOf(txtPeso.getText()), text.quitarTildes(textAreaDescrp.getText()),
@@ -249,24 +341,13 @@ public class NewPokemon {
 				}
 				if (eleccion == 0) {
 
-					if (BBDD.existeTipo(pokimon)) {
-						BBDD.editPokemon(pokimon);
-						new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon(),Usuario);
-						frame.dispose();
-					} else {
-						try {
-							JOptionPane.showMessageDialog(frame, "Los tipos que estas poniendo no existe",
-									"Los tipos no coincide", 0, new ImageIcon(
-											new URL("https://play.pokemonshowdown.com/sprites/gen5ani/grimer.gif")));
-						} catch (HeadlessException | MalformedURLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
+					BBDD.editPokemon(pokimon);
+					new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon(), Usuario);
+					frame.dispose();
 
 				} else if (eleccion == 1) {
 					try {
-						JOptionPane.showMessageDialog(frame, "El pokemon no se ha añadido", "No se ha añadido",
+						JOptionPane.showMessageDialog(frame, "El pokemon no se ha editado", "No se ha editado",
 								JOptionPane.INFORMATION_MESSAGE, new ImageIcon(
 										new URL("https://play.pokemonshowdown.com/sprites/gen5/mimikyu-busted.png")));
 					} catch (HeadlessException | MalformedURLException e) {
@@ -297,6 +378,10 @@ public class NewPokemon {
 		}
 	}
 
+	
+	/**
+	 * cargar los liseners
+	 */
 	private void setLiseners() {
 		btnCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -306,21 +391,78 @@ public class NewPokemon {
 		btnatras.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!edit) {
-					new Pokedex(frame.getX(), frame.getY(), 0,Usuario);
+					new Pokedex(frame.getX(), frame.getY(), Usuario);
 					frame.dispose();
 				} else {
-					new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon(),Usuario);
+					new Pokedex(frame.getX(), frame.getY(), pokimon.getId_pokemon(), Usuario);
 					frame.dispose();
 				}
 			}
 		});
+
 		btnedit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				editPokemonBD();
 			}
 		});
+
+		txtNombre.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				teclasPermitidas(e);
+			}
+		});
+
+		txtAltura.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if ((c < '0' || c > '9') && !(c == '.')) {
+					e.consume();
+				}
+			}
+		});
+
+		txtPeso.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if ((c < '0' || c > '9') && !(c == '.')) {
+					e.consume();
+				}
+			}
+		});
+
+		txtCategoria.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				teclasPermitidas(e);
+			}
+		});
+
+		txtHabilidad.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				teclasPermitidas(e);
+			}
+		});
+
 	}
 
+	/**
+	 * teclas las cuales solo se pueden pulsar bloqueando los las letras
+	 * @param e
+	 */
+	private void teclasPermitidas(KeyEvent e) {
+		char c = e.getKeyChar();
+		if (!(c < '0' || c > '9')) {
+			e.consume();
+		}
+	}
+	
+	/**
+	 * carga el frame
+	 */
 	private void loadFrame() {
 		// foto del fondo la cargo cuando el panel
 		try {
@@ -345,13 +487,20 @@ public class NewPokemon {
 		frame.getContentPane().setLayout(null);
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBackground(Color.WHITE);
-		frame.setBackground(Color.WHITE);
 		frame.setResizable(false); // false
 		frame.setVisible(true);// true
 
 	}
 
+	/**
+	 * cargar contenido
+	 */
 	private void loadcontent() {
+
+		comboBox = new JComboBox<Integer>();
+		comboBox.setBounds(604, 192, 111, 20);
+		frame.getContentPane().add(comboBox);
+		rellenarCombobox();
 
 		listaTipos = new JList<String>(BBDD.arrTipos());
 		listaTipos.setVisibleRowCount(4);
@@ -412,7 +561,7 @@ public class NewPokemon {
 		textAreaDescrp.setLineWrap(true);
 		frame.getContentPane().add(textAreaDescrp);
 
-		lblNumero = new JLabel(String.valueOf(BBDD.cuantosPokemonHay() + 1));
+		lblNumero = new JLabel(String.valueOf(BBDD.ultimoPokemon() + 1));
 		lblNumero.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNumero.setFont(new Font("Bahnschrift", Font.BOLD, 15));
 		lblNumero.setBounds(604, 195, 111, 19);
@@ -477,5 +626,15 @@ public class NewPokemon {
 		lblDatosPokemon.setBounds(467, 170, 291, 26);
 		frame.getContentPane().add(lblDatosPokemon);
 
+	}
+
+	/**
+	 * rellena el combobox con los las id de los pokemon que no existen
+	 */
+	private void rellenarCombobox() {
+		comboBox.removeAllItems();
+		for (int i = 0; i < BBDD.pokemonNoExisten().size(); i++) {
+			comboBox.addItem(BBDD.pokemonNoExisten().get(i));
+		}
 	}
 }
